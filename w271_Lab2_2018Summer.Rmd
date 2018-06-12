@@ -1,0 +1,76 @@
+---
+title: "Statistical Methods for Discrete Response, Time Series, and Panel Data (W271): Lab 2"
+author: "Professor Jeffrey Yau"
+output: 
+  pdf_document:
+  toc: true
+  number_sections: true
+fontsize: 11pt
+geometry: margin=1in
+---
+
+# Instructions:
+
+*  $\textbf{Due Date: 6/18/2018 (Monday) Before your live session}$
+*  $\textbf{Page limit of the pdf report: 15, which does not include the table of content page}$
+  * Do not play around with the margin, linespace, and font size;
+  * Use the one I specify below:
+    * fontsize=11pt
+    * margin=1in
+    * line_spacing=single
+
+* Submission:
+    * Each group only makes to make one submission to ISVC; have one of your team members made the submission
+    * Submit 2 files:
+        1. A pdf file including the summary, the details of your analysis, and all the R codes used to produce the analysis. Please do not suppress the codes in your pdf file.
+        2. R markdown file used to produce the pdf file
+    * Each group only needs to submit one set of files
+    * Use the following file naming convensation; fail to do so will receive 10% reduction in the grade:
+        * FirstNameLastName1_FirstNameLastName2_FirstNameLastName3_LabNumber.fileExtension
+        * For example, if you have three students in the group for Lab X, and their names are Paul Laskowski, Drew Paulin, and Jeffrey Yau, then you should name your file the following
+            * PaulLaskowski_DrewPaulin_JeffreyYau_LabX.Rmd
+            * PaulLaskowski_DrewPaulin_JeffreyYau_LabX.pdf
+    * Although it sounds obvious, please write the name of each members of your group on page 1 of your pdf and Rmd reports.
+    * This lab can be completed in a group of up to 4 people. Each group only needs to make one submission. I strongly encourage students to work in groups for the lab.
+
+* Other general guidelines:
+    * For statistical methods that we cover in this course, use only the R libraries and functions that are covered in this course. If you use libraries and functions that we have not covered but are for the statistical methods we learn in this course, you have to provide (1) explanation of why such libraries and functions are used instead and (2) reference to the library documentation. Lacking the explanation and reference to the documentation will result in a score of zero for the corresponding question.
+
+    * Your report needs to include
+
+        * A thorough analysis of the given dataset, which includ examiniation of anomalies, missing values, potential of top and/or bottom code, etc, in each of the variables.
+        
+        * An introduction section that summarize the question(s) being asked, the methodology employed (including the final model specification), and a highlight of the results.
+        
+        * An Exploratory Data Analysis (EDA) analysis, which includes both graphical and tabular analysis, as taught in this course. Output-dump (that is, graphs and tables that don't come with explanations) will result in a very low, if not zero, score. Since the report has a page-limit, you will have to selectively include the visuals that are most relevant for the analysis and concise explanation of the visuals. Please do not ramble.  Please remember that your report will have to "walk me through" your analysis.
+    
+      * A modeling section that include a detailed narrative. Make sure that your audience (in this case, the professors and your classmates) can easily follow the logic of your analysis that leads to your final model.
+
+          * The rationale ofdecisions made in your modeling, supported by sufficient empirical evidence. Use the insights generated from your EDA step to guide your modeling step, as we discussed in live sessions.
+    
+          * All the steps used to arrive at your final model; these steps must be clearly shown and explained.
+
+      * A conclusion that summarize the final result with respect to the question(s) being asked and key takeaways from the analysis.
+
+
+* Other requirements:
+
+  *  Students are expected to act with regards to UC Berkeley Academic Integrity.
+
+
+\newpage
+# Strategic Placement of Products in Grocery Stores
+
+Answer **Question 12 of chapter 3 (on page 189 and 190)** of Bilder and Loughin's *"Analysis of Categorical Data with R"*.  Here is the background of this analysis, taken as an excerpt from this question:
+
+```In order to maximize sales, items within grocery stores are strategically placed to draw customer attention. This exercise examines one type of item—breakfast cereal. Typically, in large grocery stores, boxes of cereal are placed on sets of shelves located on one side of the aisle. By placing particular boxes of cereals on specific shelves, grocery stores may better attract customers to them. To investigate this further, a random sample of size 10 was taken from each of four shelves at a Dillons grocery store in Manhattan, KS. These data are given in the cereal_dillons.csv file. The response variable is the shelf number, which is numbered from bottom (1) to top (4), and the explanatory variables are the sugar, fat, and sodium content of the cereals.```
+
+Since this question has part a to h, please write down each of the questions in your report so that I can easily follow your answer. 
+
+
+
+
+
+
+
+
