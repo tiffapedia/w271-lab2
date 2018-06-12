@@ -14,7 +14,11 @@ header-includes:
 
 ```{r message=FALSE}
 # add packages
-library(dplyr); library(ggplot2); library(knitr); library(stargazer)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(nnet)
+library(stargazer)
 # prevent source code from running off the page
 opts_chunk$set(tidy.opts=list(width.cutoff=70), tidy=TRUE)
 # remove all objects from current workspace
@@ -42,7 +46,7 @@ cereal2 <- data.frame(Shelf = cereal$Shelf,
 ```
 
 # Question B
-Construct side-by-side box plots with dot plots overlaid for each of the explana- tory variables. Below is code that can be used for plots involving sugar:
+Construct side-by-side box plots with dot plots overlaid for each of the explanatory variables. Below is code that can be used for plots involving sugar:
 
 ```{r}
 boxplot(formula = sugar ~ Shelf, data = cereal2, ylab = "Sugar", xlab = "Shelf", pars = list(outpch=NA))
@@ -53,15 +57,28 @@ Also, construct a parallel coordinates plot for the explanatory variables and th
 
 # Question C
 
- The response has values of 1, 2, 3, and 4. Under what setting would it be desir- able to take into account ordinality. Do you think this occurs here?
+ The response has values of 1, 2, 3, and 4. Under what setting would it be desirable to take into account ordinality. Do you think this occurs here?
 
 # Question D
 
 Estimate a multinomial regression model with linear forms of the sugar, fat, and sodium variables. Perform LRTs to examine the importance of each explanatory variable.
 
+```{r}
+cereal
+```
+
+
+```{r}
+m <- multinom(formula = Shelf ~ sugar_g + fat_g + sodium_mg, data = cereal)
+summary(m)
+Anova(m)
+```
+
+
 # Question E
 
 Show that there are no significant interactions among the explanatory variables (including an interaction among all three variables).
+
 
 # Question F
 
