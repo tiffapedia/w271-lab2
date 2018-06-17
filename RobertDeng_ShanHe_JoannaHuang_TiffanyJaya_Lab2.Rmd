@@ -29,34 +29,40 @@ set.seed(1)
 d <- read.csv("./dataset/cereal_dillons.csv", header=TRUE, sep=",")
 ```
 
-```{r}
-# set factor level for shelf
-#d$Shelf <- factor(d$Shelf, seq(1,4))
-```
-
-
 # Introduction
 
-We are under the impression that supermarkets place . For this reason, a random sample of size 10 was taken from each of the four shelves at a Dillons grocery store in Manhattan, KS in order to answer our question: Does the cereal's nutritional composition have a significant effect on its shelving placement? 
+We are under the impression that supermarkets place cereals strategically on shelves in order to increase sales. For this reason, a random sample of size 10 was taken from each of the four shelves at a Dillons grocery store in Manhattan, KS in order to answer our question: Does the cereal's nutritional composition have a significant effect on its shelving placement? 
 
+TODO: methodology being employed, highlight the results
 
-cereal manufacturers are willing to pay supermarkets more if their product was strategically placed on shelves where it can increase sales
+# EDA
 
-Cereal manufacturers are willing to pay additional price to place their product where it can increase sales. The variable shelf indicates the shelf (from teh floor) where the product was placed. We will examine if there is evidence ...
+In order for us to address this question, we first explored the dataset. The dataset contains 40 observations with 7 numerical attributes and no missing values:
 
-We will examine if the cereal's nutritional compositions (sugar, fat, and sodium) vary by shelf height. 
+- ID: Unique identifier for each cereal
+- Shelf: Shelf number, which is numbered from the bottom (1) to the top (4)
+- Cereal: Cereal product name with 38 distinct names
+- size_g: Serving size with a range of 27-60 grams
+- sugar_g: Sugar content with a range of 0-20 grams
+- fat_g: Fat content with a range of 0-5 grams
+- sodium_mg: Sodium content with a range of 0-330 milligrams
 
-- Summarize the question being asked
+```{r}
+# structure of data
+str(d)
+# summary of data
+kable(summary(d[, 4:7]))
+# list row with missing values
+d[!complete.cases(d),]
+```
 
-- Methodology being employed
+TODO: handle anomalies?
 
-- Highlight the results
+## Univariate analysis
 
-In this project, we look into grocery stores and how the product contents can give us insight into how stores strategically place items to draw customer attention. We look specifically at one type of item -- breakfast cereal. Our dataset includes a random sample of 40 shelves at a Dillons grocery store in Manhattan, KS. We aim to answer the research question: Does the cereal’s nutritional composition have a significant effect on its shelving placement?
+TODO: explore each variable -_-" boring
 
-In order to maximize sales, items within grocery stores are strategically placed to draw customer attention. This exercise examines one type of item: breakfast cereal. Typically, in large grocery stores, boxes of cereal are placed on sets of shelves located on one side of the aisle. By placing particular boxes of cereals on specific shelves, grocery stores may better attract customers to them. To investigate this further, a random sample of size 10 was taken from each of four shelves at a Dillons grocery store in Manhattan, KS. These data are given in the cereal_dillons.csv file. The response variable is the shelf number, which is numbered from bottom (1) to top (4), and the explanatory variables are the sugar, fat, and sodium content of the cereals. Using these data, complete the following:
-
-# Question A: Reformat Data
+## Question A: Reformat the data
 
 **The explanatory variables need to be re-formatted before proceeding further. First, divide each explanatory variable by its serving size to account for the different serving sizes among the cereals. Second, re-scale each variable to be
 Symptoms Seizures Cardiac deficiency within 0 and 1.**
@@ -70,50 +76,13 @@ adj.d <- data.frame(shelf = d$Shelf,
 # 2. normalize data to be within 0 and 1
 normalize <- function(x) { (x-min(x))/(max(x)-min(x)) }
 norm.d <- data.frame(shelf = adj.d$shelf, 
+                     cereal = d$Cereal,
                      sugar = normalize(adj.d$sugar),
                      fat = normalize(adj.d$fat),
                      sodium = normalize(adj.d$sodium))
 ```
 
-```{r}
-adj.d
-```
-
-```{r}
-norm.d
-```
-
-In order for us to answer this question, we explored the dataset that contains 40 observations. This sample was obtained by taking a random sample of 10 cereal products taken from each of four shelves at a Dillons grocery store in Manhattan, KS. Looking at the dataset, there are six numerical attributes with no missing values:
-- Shelf: Shelf number, which is numbered from bottom (1) to top (4)
-- Cereal: Cereal product name with 38 distinct names
-- Size.g: Serving size with a range of 27-60 grams
-- Sugar.g: Sugar content with a range of 0-16 grams
-- Fat.g: Fat content with a range of 0-5 grams
-- Sodium.mg: Sodium content with a range of 0-330 milligrams
-
-```{r}
-# check the structure of the data
-str(d)
-```
-
-
-## Anomalies
-
-## Missing Values
-
-```{r}
-table(d$shelf)
-xtabs(~shelf, data=norm.d)
-```
-```{r}
-# check for missing value
-sapply(d, function(x) sum(is.na(x)))
-```
-
-
-## Potential of top/bottom code
-
-# Question B: EDA
+## Question B: Bivariate analysis
 
 **Construct side-by-side box plots with dot plots overlaid for each of the explanatory variables.**
 
@@ -222,11 +191,17 @@ Construct a plot similar to Figure 3.3 where the estimated probability for a she
 
 
 
-# Question H: 
+# Question H
 
 Estimate odds ratios and calculate corresponding confidence intervals for each explanatory variable. Relate your interpretations back to the plots constructed for this exercise.
 
 ```{r}
 
 ```
+
+# Invalidate 
+
+Cereal manufacturers are willing to pay supermarkets more if their product was strategically placed on shelves where it can increase sales.
+
+# Conclusion
 
