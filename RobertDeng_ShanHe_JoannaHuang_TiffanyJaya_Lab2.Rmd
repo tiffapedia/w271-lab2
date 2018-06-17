@@ -9,7 +9,7 @@ fontsize: 11pt
 geometry: margin=1in
 ---
 
-```{r}
+```{r message=FALSE}
 # add packages
 library(dplyr)
 library(ggplot2)
@@ -43,9 +43,9 @@ In order for us to address this question, we first explored the dataset. The dat
 - Shelf: Shelf number, which is numbered from the bottom (1) to the top (4)
 - Cereal: Cereal product name with 38 distinct names
 - size_g: Serving size with a range of 27-60 grams
-- sugar_g: Sugar content with a range of 0-20 grams
-- fat_g: Fat content with a range of 0-5 grams
-- sodium_mg: Sodium content with a range of 0-330 milligrams
+- sugar_g: Sugar per serving with a range of 0-20 grams
+- fat_g: Fat per serving with a range of 0-5 grams
+- sodium_mg: Sodium per serving with a range of 0-330 milligrams
 
 ```{r}
 # structure of data
@@ -55,12 +55,6 @@ kable(summary(d[, 4:7]))
 # list row with missing values
 d[!complete.cases(d),]
 ```
-
-TODO: handle anomalies?
-
-## Univariate analysis
-
-TODO: explore each variable -_-" boring
 
 ## Question A: Reformat the data
 
@@ -76,11 +70,38 @@ adj.d <- data.frame(shelf = d$Shelf,
 # 2. normalize data to be within 0 and 1
 normalize <- function(x) { (x-min(x))/(max(x)-min(x)) }
 norm.d <- data.frame(shelf = adj.d$shelf, 
-                     cereal = d$Cereal,
                      sugar = normalize(adj.d$sugar),
                      fat = normalize(adj.d$fat),
                      sodium = normalize(adj.d$sodium))
 ```
+
+## Univariate analysis
+
+Now that we have adjusted the data to account for the different serving size and normalized to be within 0 and 1, we can begin analyzing the explanatory variables of interest: sugar, fat, and sodium.
+
+```{r fig.show='hold', fig.align='center', out.width='49%', results=hide}
+# explanatory variable: sugar
+plot(density(d$sugar_g), col = "orange", lwd = 2, ylim = c(0, 0.15), main = "Density plot of sugar per serving")
+lapply(seq(1, 4), function(shelf) lines(density(d[which(d$Shelf == shelf),]$sugar_g), col = shelf, lty = shelf))
+legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number", 
+       legend = seq(1, 4), col = seq(1, 4), lty = seq(1, 4))
+
+# explanatory variable: fat
+plot(density(d$fat_g), col = "orange", lwd = 2, ylim = c(0, 1), main = "Density plot of fat per serving")
+lapply(seq(1, 4), function(shelf) lines(density(d[which(d$Shelf == shelf),]$fat_g), col = shelf, lty = shelf))
+legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number", 
+       legend = seq(1, 4), col = seq(1, 4), lty = seq(1, 4))
+
+# explanatory variable: sodium
+plot(density(d$sodium_mg), col = "orange", lwd = 2, ylim = c(0, 0.015), main = "Density plot of sodium per serving")
+lapply(seq(1, 4), function(shelf) lines(density(d[which(d$Shelf == shelf),]$sodium_mg), col = shelf, lty = shelf))
+legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number", 
+       legend = seq(1, 4), col = seq(1, 4), lty = seq(1, 4))
+
+
+```
+
+TODO: explain findings that there appears two groups within each shelf
 
 ## Question B: Bivariate analysis
 
@@ -100,6 +121,17 @@ boxplot(formula = sodium ~ shelf, data = norm.d, ylab = "Sodium", xlab = "Shelf"
 stripchart(x = norm.d$sodium ~ norm.d$shelf, lwd = 2, col = "red", method = "jitter", vertical = TRUE, pch = 1, add = TRUE)
 ```
 
+TODO:
+
+1: separation of high sugar and low sugar
+2: separation of high fat
+some outliers
+
+1: sugar 2, fat 4, sodium 1
+2: sugar 1, fat 1, sodium 2
+3: sugar 4, fat 3, sodium 3
+4: sugar 3, fat 2, sodium 4
+
 **Also, construct a parallel coordinates plot for the explanatory variables and the shelf number. Discuss if possible content differences exist among the shelves.**
 
 ```{r}
@@ -113,52 +145,44 @@ From this parallel coordinates plot, we see that:
 2. Shelf 2 generally has higher sugar levels.
 3. Most cereals overlap in sugar and sodium levels but range in fat levels.
 
-1: separation of high sugar and low sugar
-some outliers
-
-1: sugar 2, fat 4, sodium 1
-2: sugar 1, fat 1, sodium 2
-3: sugar 4, fat 2, sodium 3
-4: sugar 3, fat 3, sodium 4
-
-
 # Question C: 
  
 **The response has values of 1, 2, 3, and 4. Under what setting would it be desirable to take into account ordinality. Do you think this occurs here?**
 
-Since there are 4 shelf categories that a cereal box can be placed on, we will be using a multinomial regression model. Our goal is to model how the nutritional content affects a cereal’s corresponding probabilities each shelf category. Assuming that shelving has the potential of increasing or decreasing the likelihood that a product is purchased, an ordinal response model may be fitting. Since there is no given information on the ordering of the shelves, we will assume that customers have a tendency to look from the top to bottom, thus leading to the order of: Shelf 1 < Shelf 2 < Shelf 3 < Shelf 4.
+Cereal manufacturers are willing to pay supermarkets more if their product was strategically placed on shelves where it can increase sales.
+Bad cereal is placed at shelf 2, 1, 3, 4
 
 ```{r}
 # apply ordinality 
-norm.d$shelf <- factor(norm.d$shelf, levels=seq(1, 4), ordered=TRUE)
-levels(norm.d$shelf)
+norm.d$shelfFO <- factor(norm.d$shelf, levels=c(2, 1, 3, 4), ordered=TRUE)
+levels(norm.d$shelfFO)
 ```
-
-```{r}
-str(norm.d)
-```
-
 
 # Question D: Modeling
 
-## Validating Assumptions
+Since there are 4 shelf categories that a cereal box can be placed on, we will be using a multinomial regression model. Our goal is to model how the nutritional content affects a cereal’s corresponding probabilities each shelf category.
 
 Multinomial logistic regression does not assume normality, linearity, or homoscedasticity. However, it does assume independence among the dependent variable choices meaning that the membership in one category is not related to membership in another category. Additionally, multinomial logistic regression assumes no complete separation.
 
-Estimate a multinomial regression model with linear forms of the sugar, fat, and sodium variables. Perform LRTs to examine the importance of each explanatory variable.
+**Estimate a multinomial regression model with linear forms of the sugar, fat, and sodium variables. Perform LRTs to examine the importance of each explanatory variable.**
 
 
 ```{r}
-m <- multinom(formula = Shelf ~ sugar_g + fat_g + sodium_mg, data = cereal)
+# estimate multinomial regression model 
+m <- multinom(formula = shelf ~ sugar + fat + sodium, data = norm.d)
 summary(m)
+# perform LRT to examine importance of each variable
 Anova(m)
 ```
+
+TODO: explain 
+Fat not significant
 
 # Question E: 
 
 **Show that there are no significant interactions among the explanatory variables (including an interaction among all three variables).**
 
-
+TODO (Tiffany): I haven't double checked this yet
 
 ```{r}
 #cor(cereal2[,c("sugar", "fat", "sodium")])
@@ -180,9 +204,22 @@ Anova(m2)
 
 # Question F:
 
-Kellogg’s Apple Jacks (http://www.applejacks.com) is a cereal marketed toward children. For a serving size of 28 grams, its sugar content is 12 grams, fat content is 0.5 grams, and sodium content is 130 milligrams. Estimate the shelf probabilities for Apple Jacks.
+**Kellogg’s Apple Jacks (http://www.applejacks.com) is a cereal marketed toward children. For a serving size of 28 grams, its sugar content is 12 grams, fat content is 0.5 grams, and sodium content is 130 milligrams. Estimate the shelf probabilities for Apple Jacks.**
 
+```{r}
+serving <- 28
+sugar <- 12
+fat <- 0.5
+sodium <- 130
 
+predict(object = m, 
+        data.frame(sugar = sugar/serving, 
+                   fat = fat/serving,
+                   sodium = sodium/serving), 
+        type = "probs")
+```
+
+Shelf 1
 
 # Question G:
 
@@ -198,10 +235,6 @@ Estimate odds ratios and calculate corresponding confidence intervals for each e
 ```{r}
 
 ```
-
-# Invalidate 
-
-Cereal manufacturers are willing to pay supermarkets more if their product was strategically placed on shelves where it can increase sales.
 
 # Conclusion
 
