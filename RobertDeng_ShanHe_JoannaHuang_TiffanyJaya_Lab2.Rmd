@@ -10,7 +10,6 @@ geometry: margin=1in
 ---
 
 ```{r}
-setwd('/Users/arthur/Downloads/w271_Lab2_2018Summer/')
 # add packages
 library(dplyr)
 library(ggplot2)
@@ -26,7 +25,12 @@ rm(list = ls())
 # set seed number to reproduce results
 set.seed(1)
 # load data
-cereal <- read.csv("cereal_dillons.csv", header=TRUE, sep=",")
+d <- read.csv("./dataset/cereal_dillons.csv", header=TRUE, sep=",")
+# set factor level for shelf
+d$Shelf <- factor(d$Shelf, seq(1,4))
+```
+```{r}
+cereal <- d
 ```
 
 #Introduction
