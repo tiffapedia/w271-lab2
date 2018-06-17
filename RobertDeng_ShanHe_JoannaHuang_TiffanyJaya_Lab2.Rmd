@@ -75,29 +75,37 @@ norm.d <- data.frame(shelf = adj.d$shelf,
 
 ## Univariate analysis
 
-Now that we have adjusted the data to account for the different serving size and normalized to be within 0 and 1, we can begin analyzing the explanatory variables of interest: sugar, fat, and sodium.
+Now that we have adjusted the data to account for the different serving size and normalized to be within 0 and 1, we can begin analyzing the explanatory variables of interest, the cereal nutrition's composition: sugar per serving, fat per serving, and sodium per serving.
 
 ```{r fig.show='hold', fig.align='center', out.width='49%', results=hide}
 # explanatory variable: sugar
 plot(density(d$sugar_g), col = "orange", lwd = 2, ylim = c(0, 0.15), main = "Density plot of sugar per serving")
 lapply(seq(1, 4), function(shelf) lines(density(d[which(d$Shelf == shelf),]$sugar_g), col = shelf, lty = shelf))
+rug(d$sugar_g)
 legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number", 
        legend = seq(1, 4), col = seq(1, 4), lty = seq(1, 4))
 
 # explanatory variable: fat
 plot(density(d$fat_g), col = "orange", lwd = 2, ylim = c(0, 1), main = "Density plot of fat per serving")
 lapply(seq(1, 4), function(shelf) lines(density(d[which(d$Shelf == shelf),]$fat_g), col = shelf, lty = shelf))
+rug(d$fat_g)
 legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number", 
        legend = seq(1, 4), col = seq(1, 4), lty = seq(1, 4))
 
 # explanatory variable: sodium
 plot(density(d$sodium_mg), col = "orange", lwd = 2, ylim = c(0, 0.015), main = "Density plot of sodium per serving")
 lapply(seq(1, 4), function(shelf) lines(density(d[which(d$Shelf == shelf),]$sodium_mg), col = shelf, lty = shelf))
+rug(d$sodium_mg)
 legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number", 
        legend = seq(1, 4), col = seq(1, 4), lty = seq(1, 4))
-
-
 ```
+
+The orange density plot in each graph signifies the density plot for all shelves. As can be seen from the graph, the distribution of sugar per serving appears to be bimodal with the main peak having a wider spread than the smaller one. This is in part due to the second shelf having higher sugar content compared to the rest of the shelves. Also, it is possible that within one shelf, cereal types change from one end of the shelf to the other. 
+
+
+
+the distribution appears to be bimodal with the main peak at around 290 and a lower peak around 670
+the spread of the peak around the main mode is wider than that around the smaller mode
 
 TODO: explain findings that there appears two groups within each shelf
 
@@ -181,8 +189,17 @@ summary(m)
 Anova(m)
 ```
 
+```{r}
+m.fo <- multinom(formula = shelfFO ~ sugar + fat + sodium, data = norm.d)
+summary(m.fo)
+```
+```{r}
+Anova(m.fo)
+```
+
 TODO: explain 
 Fat not significant
+
 
 # Question E: 
 
@@ -250,6 +267,8 @@ ci.OR.shelf2<-exp(conf.beta[2:4,1:2,1])
 ci.OR.shelf3<-exp(conf.beta[2:4,1:2,2])
 ci.OR.shelf4<-exp(conf.beta[2:4,1:2,3])
 round(data.frame(low = ci.OR.shelf2[,1], up = ci.OR.shelf2[,2]), 2)
+round(data.frame(low = ci.OR.shelf3[,1], up = ci.OR.shelf3[,2]), 2)
+round(data.frame(low = ci.OR.shelf4[,1], up = ci.OR.shelf4[,2]), 2)
 ```
 
 # Conclusion
