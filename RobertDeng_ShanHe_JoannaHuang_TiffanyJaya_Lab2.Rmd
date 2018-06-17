@@ -12,11 +12,9 @@ geometry: margin=1in
 ```{r message=FALSE}
 # add packages
 library(dplyr)
-library(ggplot2)
 library(knitr)
 library(MASS)
 library(nnet)
-library(stargazer)
 library(Hmisc)
 library(car)
 # prevent source code from running off the page
@@ -145,6 +143,14 @@ From this parallel coordinates plot, we see that:
 2. Shelf 2 generally has higher sugar levels.
 3. Most cereals overlap in sugar and sodium levels but range in fat levels.
 
+```{r}
+norm.d %>% 
+  group_by(shelf) %>% 
+  summarise(mean.sugar=mean(sugar), sd.sugar=sd(sugar), 
+            mean.fat=mean(fat), sd.fat=sd(fat),
+            mean.sodium=mean(sodium), sd.sodium=sd(sodium))
+```
+
 # Question C: 
  
 **The response has values of 1, 2, 3, and 4. Under what setting would it be desirable to take into account ordinality. Do you think this occurs here?**
@@ -232,8 +238,18 @@ Construct a plot similar to Figure 3.3 where the estimated probability for a she
 
 Estimate odds ratios and calculate corresponding confidence intervals for each explanatory variable. Relate your interpretations back to the plots constructed for this exercise.
 
-```{r}
+TODO: need to make correction because of normalization made above ^
 
+```{r}
+# odd ratios
+round(exp(coefficients(m)[,-1]), 2)
+
+# confidence intervals
+conf.beta <- confint(object = m, level = 0.95)
+ci.OR.shelf2<-exp(conf.beta[2:4,1:2,1])
+ci.OR.shelf3<-exp(conf.beta[2:4,1:2,2])
+ci.OR.shelf4<-exp(conf.beta[2:4,1:2,3])
+round(data.frame(low = ci.OR.shelf2[,1], up = ci.OR.shelf2[,2]), 2)
 ```
 
 # Conclusion
