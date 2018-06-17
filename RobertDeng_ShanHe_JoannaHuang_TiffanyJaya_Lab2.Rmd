@@ -37,6 +37,15 @@ d <- read.csv("./dataset/cereal_dillons.csv", header=TRUE, sep=",")
 
 # Introduction
 
+We are under the impression that supermarkets place . For this reason, a random sample of size 10 was taken from each of the four shelves at a Dillons grocery store in Manhattan, KS in order to answer our question: Does the cereal's nutritional composition have a significant effect on its shelving placement? 
+
+
+cereal manufacturers are willing to pay supermarkets more if their product was strategically placed on shelves where it can increase sales
+
+Cereal manufacturers are willing to pay additional price to place their product where it can increase sales. The variable shelf indicates the shelf (from teh floor) where the product was placed. We will examine if there is evidence ...
+
+We will examine if the cereal's nutritional compositions (sugar, fat, and sodium) vary by shelf height. 
+
 - Summarize the question being asked
 
 - Methodology being employed
@@ -82,9 +91,25 @@ In order for us to answer this question, we explored the dataset that contains 4
 - Fat.g: Fat content with a range of 0-5 grams
 - Sodium.mg: Sodium content with a range of 0-330 milligrams
 
+```{r}
+# check the structure of the data
+str(d)
+```
+
+
 ## Anomalies
 
 ## Missing Values
+
+```{r}
+table(d$shelf)
+xtabs(~shelf, data=norm.d)
+```
+```{r}
+# check for missing value
+sapply(d, function(x) sum(is.na(x)))
+```
+
 
 ## Potential of top/bottom code
 
@@ -134,6 +159,17 @@ some outliers
 
 Since there are 4 shelf categories that a cereal box can be placed on, we will be using a multinomial regression model. Our goal is to model how the nutritional content affects a cereal’s corresponding probabilities each shelf category. Assuming that shelving has the potential of increasing or decreasing the likelihood that a product is purchased, an ordinal response model may be fitting. Since there is no given information on the ordering of the shelves, we will assume that customers have a tendency to look from the top to bottom, thus leading to the order of: Shelf 1 < Shelf 2 < Shelf 3 < Shelf 4.
 
+```{r}
+# apply ordinality 
+norm.d$shelf <- factor(norm.d$shelf, levels=seq(1, 4), ordered=TRUE)
+levels(norm.d$shelf)
+```
+
+```{r}
+str(norm.d)
+```
+
+
 # Question D: Modeling
 
 ## Validating Assumptions
@@ -175,7 +211,9 @@ Anova(m2)
 
 # Question F:
 
-Kellogg’s Apple Jacks (http://www.applejacks.com) is a cereal marketed to- ward children. For a serving size of 28 grams, its sugar content is 12 grams, fat content is 0.5 grams, and sodium content is 130 milligrams. Estimate the shelf probabilities for Apple Jacks.
+Kellogg’s Apple Jacks (http://www.applejacks.com) is a cereal marketed toward children. For a serving size of 28 grams, its sugar content is 12 grams, fat content is 0.5 grams, and sodium content is 130 milligrams. Estimate the shelf probabilities for Apple Jacks.
+
+
 
 # Question G:
 
