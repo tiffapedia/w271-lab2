@@ -162,7 +162,7 @@ Multinomial logistic regression does not assume normality, linearity, or homosce
 **Estimate a multinomial regression model with linear forms of the sugar, fat, and sodium variables. Perform LRTs to examine the importance of each explanatory variable.**
 
 ```{r}
-# set shelf 2 as the reference point
+# set shelf 2 as the base level
 norm.d$shelf <- factor(norm.d$shelf)
 norm.d$shelf <- relevel(norm.d$shelf, ref="2")
 # estimate multinomial regression model 
@@ -175,7 +175,7 @@ Anova(m)
 From the coefficients table in the output, we obtain the estimated model as: 
 
 $$\begin{aligned}
-log(\frac{\hat{\pi}_{\text{shelf} = 1}}{\hat{\pi}_{\text{shelf} = 2}}) = -6.90 - 2.69(\text{sugar}) - 4.06(\text{fat}) + 17.49(\text{sodium}) + \varepsilon
+log(\frac{\hat{\pi}_{\text{shelf} = 1}}{\hat{\pi}_{\text{shelf} = 2}}) = -6.90 - 2.69(\text{sugar}) - 4.06(\text{fat}) + 17.49(\text{sodium}) 
 \end{aligned}$$
 
 * A one-unit increase in the variable sugar is associated with the decrease in the log odds of being in shelf 1 versus shelf 2 in the amount of 2.69. In other words, if the variable sugar increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 1.
@@ -183,7 +183,7 @@ log(\frac{\hat{\pi}_{\text{shelf} = 1}}{\hat{\pi}_{\text{shelf} = 2}}) = -6.90 -
 * A one-unit increase in the variable sodium is associated with the increase in the log odds of being in shelf 1 versus shelf 2 in the amount of 17.49. In other words, if the variable sodium increases by one unit, the chances of being placed in shelf 1 is higher than being in shelf 2.
 
 $$\begin{aligned}
-log(\frac{\hat{\pi}_{\text{shelf} = 3}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.78 - 14.91(\text{sugar}) - 4.62(\text{fat}) - 7.49(\text{sodium}) + \varepsilon
+log(\frac{\hat{\pi}_{\text{shelf} = 3}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.78 - 14.91(\text{sugar}) - 4.62(\text{fat}) - 7.49(\text{sodium})
 \end{aligned}$$
 
 * A one-unit increase in the variable sugar is associated with the decrease in the log odds of being in shelf 3 versus shelf 2 in the amount of 14.91. In other words, if the variable sugar increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 3.
@@ -191,7 +191,7 @@ log(\frac{\hat{\pi}_{\text{shelf} = 3}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.78 -
 * A one-unit increase in the variable sodium is associated with the decrease in the log odds of being in shelf 3 versus shelf 2 in the amount of 7.49. In other words, if the variable sodium increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 3.
 
 $$\begin{aligned}
-log(\frac{\hat{\pi}_{\text{shelf} = 4}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.39 - 14.09(\text{sugar}) - 4.93(\text{fat}) - 7.19(\text{sodium}) + \varepsilon
+log(\frac{\hat{\pi}_{\text{shelf} = 4}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.39 - 14.09(\text{sugar}) - 4.93(\text{fat}) - 7.19(\text{sodium}) 
 \end{aligned}$$
 
 * A one-unit increase in the variable sugar is associated with the decrease in the log odds of being in shelf 4 versus shelf 2 in the amount of 14.09. In other words, if the variable sugar increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 4.
@@ -203,8 +203,6 @@ Based on the likelihood ratio test, sugar and sodium are important explanatory v
 # Question E: 
 
 **Show that there are no significant interactions among the explanatory variables (including an interaction among all three variables).**
-
-TODO (Tiffany): I haven't double checked this yet
 
 ```{r}
 #cor(cereal2[,c("sugar", "fat", "sodium")])
@@ -244,59 +242,74 @@ predict(object = m,
 
 Apple Jack will most likely be placed on the first shelf.
 
-# Question G:
+# Question G: Estimated probability for a shelf depending on the sugar content
 
 **Construct a plot similar to Figure 3.3 where the estimated probability for a shelf is on the y-axis and the sugar content is on the x-axis. Use the mean overall fat and sodium content as the corresponding variable values in the model. Interpret the plot with respect to sugar content.**
 
-```{r}
-coefficients(m)
-```
 
 ```{r fig.show='hold', fig.align='center', out.width='49%', fig.caption='Estimated multinomial regression model for the data where sugar is the only explanatory variable included in the model'}
+
 beta.hat <- coefficients(m)
 mean.fat <- mean(norm.d$fat)
 mean.sodium <- mean(norm.d$sodium)
 
+# method 1: manually provide values for sugar
+
+sugar <- seq(from=0, to=1, by=0.1)
+
+#log.odds.shelf.1 = beta.hat[1,1] + beta.hat[1,2] * sugar + mean.fat + mean.sodium
+#log.odds.shelf.3 = beta.hat[2,1] + beta.hat[2,2] * sugar + mean.fat + mean.sodium
+#log.odds.shelf.4 = beta.hat[3,1] + beta.hat[3,2] * sugar + mean.fat + mean.sodium
+
+#pi.hat.shelf.1 = exp(log.odds.shelf.1)/(1 + exp(log.odds.shelf.1) + exp(log.odds.shelf.3) + exp(log.odds.shelf.4))
+#pi.hat.shelf.2 = 1/(1 + exp(log.odds.shelf.1) + exp(log.odds.shelf.3) + exp(log.odds.shelf.4))
+#pi.hat.shelf.3 = exp(log.odds.shelf.3)/(1 + exp(log.odds.shelf.1) + exp(log.odds.shelf.3) + exp(log.odds.shelf.4))
+#pi.hat.shelf.4 = exp(log.odds.shelf.4)/(1 + exp(log.odds.shelf.1) + exp(log.odds.shelf.3) + exp(log.odds.shelf.4))
+
+#plot(x=sugar, y=pi.hat.shelf.1, col=1, lty=1, lwd=2, ylim=c(0,1), xlim=c(0,1),
+#     ylab='estimated probability for a shelf', xlab='sugar per serving (after normalized)')
+#lines(x=sugar, y=pi.hat.shelf.2, col=2, lty=2, lwd=2)
+#lines(x=sugar, y=pi.hat.shelf.3, col=3, lty=3, lwd=2)
+#lines(x=sugar, y=pi.hat.shelf.4, col=4, lty=4, lwd=2)
+#legend('topleft', cex=0.8, inset=.05, title='Shelf Number', legend=seq(1,4), col=seq(1,4), lty=seq(1,4), lwd=rep(3,4))
+
+# method 2: automatically provide values for sugar 
+
 curve(expr = 1/(1 + exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium) + exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium) + exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)), 
-      ylab = expression(hat(pi)), xlab = "sugar",
-      xlim = c(min(norm.d$sugar), max(norm.d$sugar)), 
-      col = "black", lty = "solid", lwd = 2, n = 1000, type = "n",
+      ylab = 'estimated probability for a shelf', xlab = 'sugar per serving (after normalized)',
+      ylim = c(0,1), xlim = c(0,1), type = 'n',
       panel.first = grid(col = "gray", lty = "dotted"))
-# shelf 2
-curve(expr = 1/(1 + exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium) + exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium) + exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)),
-  col = 1, lty = 1, lwd = 2, n = 1000, add = TRUE,
-  xlim = c(min(norm.d$sugar[norm.d$shelf == 2]), max(norm.d$sugar[norm.d$shelf == 2])))
-# shelf 1
+
+# pi.hat.shelf.1
 curve(expr = exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium)/(1 + exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium) + exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium) + exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)),
-  col = 2, lty = 2, lwd = 2, n = 1000, add = TRUE,
+  col = 1, lty = 1, lwd = 2, n = 1000, add = TRUE,
   xlim = c(norm.d$sugar[norm.d$shelf == 1]), max(norm.d$sugar[norm.d$shelf == 1]))
-# shelf 3
+
+# pi.hat.shelf.2 
+curve(expr = 1/(1 + exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium) + exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium) + exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)),
+  col = 2, lty = 2, lwd = 2, n = 1000, add = TRUE,
+  xlim = c(min(norm.d$sugar[norm.d$shelf == 2]), max(norm.d$sugar[norm.d$shelf == 2])))
+
+# pi.hat.shelf.3
 curve(expr = exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium)/(1 + exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium) + exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium) + exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)),
   col = 3, lty = 3, lwd = 2, n = 1000, add = TRUE,
   xlim = c(min(norm.d$sugar[norm.d$shelf == 3]), max(norm.d$sugar[norm.d$shelf == 1]))) 
-# shelf 4
+
+# pi.hat.shelf.4
 curve(expr = exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)/(1 + exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium) + exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium) + exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)),
   col = 4, lty = 4, lwd = 2, n = 1000, add = TRUE,
   xlim = c(min(norm.d$sugar[norm.d$shelf == 4]), max(norm.d$sugar[norm.d$shelf == 4]))) 
+
 # legend
-legend("topleft", legend = c(1, 2, 3, 4), 
-       lty = c(2, 1, 3, 4), col = c(2, 1, 3, 4), bty="n", lwd = c(2,2,2,2), seg.len = 4)
+legend('topleft', cex=0.8, inset=.05, title='Shelf Number', legend=seq(1,4), col=seq(1,4), lty=seq(1,4), lwd=rep(3,4))
 ```
-
-
 
 ```{r}
 # verify plot is correct
-sugar.values <- seq(from = 0, to = 1, by = 0.1)
-data.frame(sugar.values, 
-           round(predict(object = m, 
-                         newdata = data.frame(sugar = density.values, 
-                                                          fat = mean(norm.d$fat), 
-                                                          sodium = mean(norm.d$sodium)), 
-                         type = "probs"), 2))
+data.frame(sugar, round(predict(object = m, newdata = data.frame(sugar = sugar, fat = mean.fat, sodium = mean.sodium), type = "probs"), 2))
 ```
 
-
+The estimated probability that the cereal is placed on the third shelf is highest for smaller serving of sugar. Then, the estimated probability that the cereal is placed on the fourth shelf is highest when the sugar level is slightly above the middle. When the sugar serving is large, the estimated probability that the cereal is placed on the second shelf is highest. 
 
 # Question H
 
