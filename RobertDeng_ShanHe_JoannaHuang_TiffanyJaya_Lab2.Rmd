@@ -27,13 +27,13 @@ set.seed(1)
 d <- read.csv("./dataset/cereal_dillons.csv", header=TRUE, sep=",")
 ```
 
-# Introduction
+**Introduction**
 
 We are under the impression that supermarkets place cereals strategically on shelves in order to increase sales. For this reason, a random sample of size 10 was taken from each of the four shelves at a Dillons grocery store in Manhattan, KS in order to answer our question: Does the cereal's nutritional composition have a significant effect on its shelving placement? 
 
-TODO: methodology being employed, highlight the results
+We chose the multinomial regression model to answer this question since the dependent variable, the probability of the cereal being placed on the shelf, has more than two categories. What we found is that cereal with high sugar content is placed on the second shelf (from the bottom) while cereal with low sugar content is placed on teh third shelf (from the bottom).  
 
-# EDA
+**EDA**
 
 In order for us to address this question, we first explored the dataset. The dataset contains 40 observations with 7 numerical attributes and no missing values:
 
@@ -54,10 +54,7 @@ kable(summary(d[, 4:7]))
 d[!complete.cases(d),]
 ```
 
-## Question A: Reformat the data
-
-**The explanatory variables need to be re-formatted before proceeding further. First, divide each explanatory variable by its serving size to account for the different serving sizes among the cereals. Second, re-scale each variable to be
-Symptoms Seizures Cardiac deficiency within 0 and 1.**
+**Question A: The explanatory variables need to be re-formatted before proceeding further. First, divide each explanatory variable by its serving size to account for the different serving sizes among the cereals. Second, re-scale each variable to be Symptoms Seizures Cardiac deficiency within 0 and 1.**
 
 ```{r}
 # 1. adjust for different serving sizes 
@@ -73,9 +70,7 @@ norm.d <- data.frame(shelf = adj.d$shelf,
                      sodium = normalize(adj.d$sodium))
 ```
 
-## Univariate analysis
-
-Now that we have adjusted the data to account for the different serving size and normalized to be within 0 and 1, we can begin analyzing the explanatory variables of interest, the cereal nutrition's composition: sugar per serving, fat per serving, and sodium per serving.
+Now that we have adjusted the data, we can begin analyzing the explanatory variables of interest, the cereal nutrition's composition: sugar per serving, fat per serving, and sodium per serving.
 
 ```{r fig.show='hold', fig.align='center', out.width='49%', results='hide'}
 # explanatory variable: sugar
@@ -102,9 +97,7 @@ legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number",
 
 The orange density plot in each graph signifies the density plot for all shelves. As can be seen from the graph, the distribution of sugar per serving appears to be bimodal with the main peak having a wider spread than the smaller one. This is in part due to the second shelf having cereals with higher sugar content compared to those on the other shelves. Also, it is possible that within one shelf, cereal types change from one end of the shelf to the other, attributing to the bimodal shape. For example, cereals with higher sugar, fat, and sodium contents are more popular amongst children while adults might prefer a healthier alternative. It comes to no surprise that the second shelf also has a bimodal shape with cereals having higher fat and sodium content than those placed on the other shelves. In contrast, the third shelf seems to carry healthier alternative cereals with higher fat and lower sugar and sodium level. The density plot of fat per serving and sodium per serving, although appearing bimodal in shape, are not as distinct. The distribution of fat per serving is more positively skewed with few cereals having higher fat content overall while the distribution of sodium per serving is more negatively skewed with few cereals having less sodium content overall.
 
-## Question B: Bivariate analysis
-
-**Construct side-by-side box plots with dot plots overlaid for each of the explanatory variables.**
+**Question B: Construct side-by-side box plots with dot plots overlaid for each of the explanatory variables.**
 
 ```{r fig.show='hold', fig.align='center', out.width='49%'}
 # explanatory variable: sugar
@@ -145,21 +138,17 @@ norm.d %>%
             mean.sodium=mean(sodium), sd.sodium=sd(sodium))
 ```
 
-What we noticed is similar to what we have noticed in our univariate analysis. The second shelf has higher sugar, fat, and sodium per serving in general. In addition, the first shelf has higher sodium levels as well as broader range in terms of sugar and fat content similar to the third shelf. 
-
-# Question C: Ordinality of shelves
- 
-**The response has values of 1, 2, 3, and 4. Under what setting would it be desirable to take into account ordinality. Do you think this occurs here?**
+**Question C: The response has values of 1, 2, 3, and 4. Under what setting would it be desirable to take into account ordinality. Do you think this occurs here?**
 
 Cereal manufacturers are willing to pay grocery stores more if their product was strategically placed on shelves where it can increase sales. Under this condition, it would be desirable to take ordinality into account. Based on past studies on store design and visual merchandising, retailers divide vertical shelves into 4 zones: 1) Stoop Level 2) Touch Level 3) Eye Level 4) Stretch Level. Eye Level and Touch Level are the most profitable with adults and children respectively given what is easily seen and obtainable. Furthermore, since it takes a little less physical effort to tip toe for the Stretch Level than crouch down for the Stoop Level, we will assume the former is slightly more profitable as well. Based on this reasoning, we will rank the importance of the shelves as follows: 3 > 2 > 4 > 1.
 
-# Question D: Modeling
+**Modeling**
 
 Since there are 4 shelf categories that a cereal box can be placed on, we will be using a multinomial regression model. Our goal is to model how the nutritional content affects a cereal’s corresponding probabilities in each shelf category.
 
 Multinomial logistic regression does not assume normality, linearity, or homoscedasticity. However, it does assume independence among the dependent variable choices meaning that the membership in one category is not related to membership in another category. As of right now, we can assume that independence is met since the nutritional content of cereal A, for example, does not affect the nutritional content of cereal B and therefore its product placement on the shelf. Additionally, multinomial logistic regression assumes no complete separation.
 
-**Estimate a multinomial regression model with linear forms of the sugar, fat, and sodium variables. Perform LRTs to examine the importance of each explanatory variable.**
+**Question D: Estimate a multinomial regression model with linear forms of the sugar, fat, and sodium variables. Perform LRTs to examine the importance of each explanatory variable.**
 
 ```{r}
 # set shelf 2 as the base level
@@ -200,9 +189,7 @@ log(\frac{\hat{\pi}_{\text{shelf} = 4}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.39 -
 
 Based on the likelihood ratio test, sugar and sodium are important explanatory variables in determining where the cereal will be placed on the shelf. On the other hand, there is not sufficient evidence that the fat variable has an effect on the shelf placement.
 
-# Question E: 
-
-**Show that there are no significant interactions among the explanatory variables (including an interaction among all three variables).**
+**Question E: Show that there are no significant interactions among the explanatory variables (including an interaction among all three variables).**
 
 ```{r}
 #cor(cereal2[,c("sugar", "fat", "sodium")])
@@ -222,9 +209,7 @@ Anova(m2)
 #anova(cereal_base, cereal_saturated, test='Chi')
 ```
 
-# Question F:
-
-**Kellogg’s Apple Jacks (http://www.applejacks.com) is a cereal marketed toward children. For a serving size of 28 grams, its sugar content is 12 grams, fat content is 0.5 grams, and sodium content is 130 milligrams. Estimate the shelf probabilities for Apple Jacks.**
+**Question F: Kellogg’s Apple Jacks (http://www.applejacks.com) is a cereal marketed toward children. For a serving size of 28 grams, its sugar content is 12 grams, fat content is 0.5 grams, and sodium content is 130 milligrams. Estimate the shelf probabilities for Apple Jacks.**
 
 ```{r}
 # Apple Jack's content
@@ -242,9 +227,7 @@ predict(object = m,
 
 Apple Jack will most likely be placed on the first shelf.
 
-# Question G: Estimated probability for a shelf depending on the sugar content
-
-**Construct a plot similar to Figure 3.3 where the estimated probability for a shelf is on the y-axis and the sugar content is on the x-axis. Use the mean overall fat and sodium content as the corresponding variable values in the model. Interpret the plot with respect to sugar content.**
+**Question G: Construct a plot similar to Figure 3.3 where the estimated probability for a shelf is on the y-axis and the sugar content is on the x-axis. Use the mean overall fat and sodium content as the corresponding variable values in the model. Interpret the plot with respect to sugar content.**
 
 ```{r fig.show='hold', fig.align='center', out.width='49%', fig.caption='Estimated multinomial regression model for the data where sugar is the only explanatory variable included in the model'}
 
@@ -365,31 +348,41 @@ curve(expr = exp(beta.hat[3,1] + beta.hat[3,3]*x + mean.sugar + mean.fat)/(1 + e
 legend('topleft', cex=0.8, inset=.05, title='Shelf Number', legend=seq(1,4), col=seq(1,4), lty=seq(1,4), lwd=rep(3,4))
 ```
 
-
-
-# Question H
-
-Estimate odds ratios and calculate corresponding confidence intervals for each explanatory variable. Relate your interpretations back to the plots constructed for this exercise.
+**Question H: Estimate odds ratios and calculate corresponding confidence intervals for each explanatory variable. Relate your interpretations back to the plots constructed for this exercise.**
 
 ```{r}
-exp(coef(m))
+# standard deviation
+sd.d <- apply(norm.d[2:4], 2, sd) 
+round(sd.d, 2)
+
+# wald ci
+conf.beta <- confint(m, level=0.95)
+ci.or.shelf.1 <- exp(sd.d * conf.beta[2:4, 1:2, 1])
+ci.or.shelf.2 <- exp(sd.d * conf.beta[2:4, 1:2, 2])
+ci.or.shelf.3 <- exp(sd.d * conf.beta[2:4, 1:2, 3])
+
+print('odd ratio for shelf 1 vs shelf 2:')
+#round(exp(sd.d * beta.hat[1, 2:4]), 2)
+round(1/exp(sd.d * beta.hat[1, 2:4]), 2)
+round(data.frame(low=1/ci.or.shelf.1[,2], up=1/ci.or.shelf.1[,1]), 2)
+
+print('odd ratio for shelf 3 vs shelf 2:')
+#round(exp(sd.d * beta.hat[2, 2:4]), 2)
+round(1/exp(sd.d * beta.hat[2, 2:4]), 2)
+round(data.frame(low=1/ci.or.shelf.2[,2], up=1/ci.or.shelf.2[,1]), 2)
+
+print('odd ratio for shelf 4 vs shelf 2:')
+#round(exp(sd.d * beta.hat[3, 2:4]), 2)
+round(1/exp(sd.d * beta.hat[3, 2:4]), 2)
+round(data.frame(low=1/ci.or.shelf.3[,2], up=1/ci.or.shelf.3[,1]), 2)
 ```
 
+* The estimated odds of shelf 1 vs shelf 2 change by 2.06 times (with 95% CI of 0.14 and 29.66) for a 0.27 decrease in sugar per serving holding the other variables constant. The estimated odds of shelf 3 vs shelf 2 change by 55.40 times (with 95% CI of 3.84 and 799.84) for a 0.27 decrease in sugar per serving holding the other variables constant. The estimated odds of shelf 4 vs shelf 2 change by 44.40 times (with 95% CI of 3.19 and 617.74) for 0.27 decrease in sugar per serving holding the other variables constant.
+* The estimated odds of shelf 1 vs shelf 2 change by 3.37 times (with 95% CI of 0.87 and 13.03) for a 0.30 decrease in fat per serving holding the other variables constant. The estimated odds of shelf 3 vs shelf 2 change by 3.98 times (with 95% CI of 0.79 and 19.99) for a 0.30 decrease in fat per serving holding the other variables constant. The estimated odds of shelf 4 vs shelf 2 change by 4.37 times (with 95% CI of 0.88 and 21.85) for a 0.30 decrease in fat per serving holding the other variables constant.
+* The estimated odds of shelf 1 vs shelf 2 change by 0.02 times (with 95% CI of 0 and 0.44) for a 0.23 decrease in sodium per serving holding the other variables constant. The estimated odds of shelf 3 vs shelf 2 change by 5.60 times (with 95% CI of 0.46 and 68.49) for a 0.23 decrease in sodium per serving holding the other variables constant. The estimated odds of shelf shelf 4 vs shelf 2 change by 5.22 times (with 95% CI of 0.43 and 62.81) for a 0.23 decrease in sodium per serving holding the other variables constant.
 
-```{r}
-# odd ratios
-round(exp(coefficients(m)[,-1]), 2)
+We see that cereals with high content of sugar is more likely to be placed at shelf 2 while cereals with high content of sodium is more likely placed in either shelf 1 or 2. We can relate these results back to the parallel coordinates plot. The large variance of sugar and sodium content in the third and fourth shelves can also be seen in the boxplots done earlier during our EDA. Lastly, sugar as an explanatory variable seems to be a stronger indicative of shelf placement, and the graphs in the previous sections seem to validate this intuition.
 
-# confidence intervals
-conf.beta <- confint(object = m, level = 0.95)
-ci.OR.shelf2<-exp(conf.beta[2:4,1:2,1])
-ci.OR.shelf3<-exp(conf.beta[2:4,1:2,2])
-ci.OR.shelf4<-exp(conf.beta[2:4,1:2,3])
-round(data.frame(low = ci.OR.shelf2[,1], up = ci.OR.shelf2[,2]), 2)
-round(data.frame(low = ci.OR.shelf3[,1], up = ci.OR.shelf3[,2]), 2)
-round(data.frame(low = ci.OR.shelf4[,1], up = ci.OR.shelf4[,2]), 2)
-```
-
-# Conclusion
+**Conclusion**
 
 Our findings seem to confirm that cereals are strategically placed depending on the target market with sugar per serving being the best indicator of the shelf placement. Cereals with high sugar content are placed on the second shelf, also known as the "touch level", reachable by children. Healthier alternatives with lower sugar are placed on the second shelf where it hits at approximately adult eye level. If the cereal was slightly more sweet than the ones on the third shelf, it was placed at fourth shelf within stretching distance of an average adult height. The last shelf closest to the floor appears to store a variety of different types of cereals with different nutritional content. Supplemental sales data can confirm the importance of the shelf order that we have found in this initial research.
