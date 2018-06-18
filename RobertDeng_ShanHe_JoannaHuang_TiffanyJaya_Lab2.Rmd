@@ -209,7 +209,7 @@ TODO (Tiffany): I haven't double checked this yet
 ```{r}
 #cor(cereal2[,c("sugar", "fat", "sodium")])
 library(psych)
-pairs.panels(cereal2[,c("sugar", "fat", "sodium")])
+pairs.panels(norm.d[,c("sugar", "fat", "sodium")])
 ```
 
 Looking at the correlation between the three explanatory variables, there does not appear to be any strong relationships as the correlation coefficients are all less than 0.5 in magnitude.
@@ -217,8 +217,8 @@ Looking at the correlation between the three explanatory variables, there does n
 To look at whether we need interactions within our model, we can create a saturated model and run an Anova test to see if any interactions have significance.
 
 ```{r}
-m0 <- multinom(formula=Shelf~1, data=cereal2)
-m2 <- multinom(formula = Shelf ~ sugar*fat*sodium, data=cereal2)
+m0 <- multinom(formula=shelf ~1, data=norm.d)
+m2 <- multinom(formula = shelf ~ sugar*fat*sodium, data=norm.d)
 #summary(cereal_m1)
 Anova(m2)
 #anova(cereal_base, cereal_saturated, test='Chi')
