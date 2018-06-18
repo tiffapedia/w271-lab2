@@ -246,8 +246,51 @@ Apple Jack will most likely be placed on the first shelf.
 
 # Question G:
 
-Construct a plot similar to Figure 3.3 where the estimated probability for a shelf is on the y-axis and the sugar content is on the x-axis. Use the mean overall fat and sodium content as the corresponding variable values in the model. Interpret the plot with respect to sugar content.
+**Construct a plot similar to Figure 3.3 where the estimated probability for a shelf is on the y-axis and the sugar content is on the x-axis. Use the mean overall fat and sodium content as the corresponding variable values in the model. Interpret the plot with respect to sugar content.**
 
+```{r}
+coefficients(m)
+```
+
+```{r fig.show='hold', fig.align='center', out.width='49%', fig.caption='Estimated multinomial regression model for the data where sugar is the only explanatory variable included in the model'}
+beta.hat <- coefficients(m)
+mean.fat <- mean(norm.d$fat)
+mean.sodium <- mean(norm.d$sodium)
+
+curve(expr = 1/(1 + exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium) + exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium) + exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)), 
+      ylab = expression(hat(pi)), xlab = "sugar",
+      xlim = c(min(norm.d$sugar), max(norm.d$sugar)), 
+      col = "black", lty = "solid", lwd = 2, n = 1000, type = "n",
+      panel.first = grid(col = "gray", lty = "dotted"))
+# shelf 2
+curve(expr = 1/(1 + exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium) + exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium) + exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)),
+  col = 1, lty = 1, lwd = 2, n = 1000, add = TRUE,
+  xlim = c(min(norm.d$sugar[norm.d$shelf == 2]), max(norm.d$sugar[norm.d$shelf == 2])))
+# shelf 1
+curve(expr = exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium)/(1 + exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium) + exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium) + exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)),
+  col = 2, lty = 2, lwd = 2, n = 1000, add = TRUE,
+  xlim = c(norm.d$sugar[norm.d$shelf == 1]), max(norm.d$sugar[norm.d$shelf == 1]))
+# shelf 3
+curve(expr = exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium)/(1 + exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium) + exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium) + exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)),
+  col = 3, lty = 3, lwd = 2, n = 1000, add = TRUE,
+  xlim = c(min(norm.d$sugar[norm.d$shelf == 3]), max(norm.d$sugar[norm.d$shelf == 1]))) 
+# shelf 4
+curve(expr = exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)/(1 + exp(beta.hat[1,1] + beta.hat[1,2]*x + mean.fat + mean.sodium) + exp(beta.hat[2,1] + beta.hat[2,2]*x + mean.fat + mean.sodium) + exp(beta.hat[3,1] + beta.hat[3,2]*x + mean.fat + mean.sodium)),
+  col = 4, lty = 4, lwd = 2, n = 1000, add = TRUE,
+  xlim = c(min(norm.d$sugar[norm.d$shelf == 4]), max(norm.d$sugar[norm.d$shelf == 4]))) 
+# legend
+legend("topleft", legend = c(1, 2, 3, 4), 
+       lty = c(2, 1, 3, 4), col = c(2, 1, 3, 4), bty="n", lwd = c(2,2,2,2), seg.len = 4)
+```
+
+
+
+```{r}
+# dev.off()  # Create plot for book
+# Verify plot is correct
+density.values<-seq(from = 0.8, to = 1.6, by = 0.1)
+data.frame(density.values, round(predict(object = mod.fit.nom.density, newdata = data.frame(density = density.values), type = "probs"), 2))
+```
 
 
 
