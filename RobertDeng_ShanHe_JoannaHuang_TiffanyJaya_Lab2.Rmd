@@ -218,11 +218,12 @@ Anova(m2)
 **Kellogg’s Apple Jacks (http://www.applejacks.com) is a cereal marketed toward children. For a serving size of 28 grams, its sugar content is 12 grams, fat content is 0.5 grams, and sodium content is 130 milligrams. Estimate the shelf probabilities for Apple Jacks.**
 
 ```{r}
+# Apple Jack's content
 serving <- 28
 sugar <- 12
 fat <- 0.5
 sodium <- 130
-
+# predict Apple Jack's shelf placement
 predict(object = m, 
         data.frame(sugar = sugar/serving, 
                    fat = fat/serving,
@@ -230,7 +231,7 @@ predict(object = m,
         type = "probs")
 ```
 
-Shelf 1
+Apple Jack will most likely be placed on the first shelf.
 
 # Question G:
 
