@@ -17,7 +17,6 @@ library(Hmisc)
 library(knitr)
 library(MASS)
 library(nnet)
-library(psych)
 # prevent source code from running off the page
 opts_chunk$set(tidy.opts=list(width.cutoff=70), tidy=TRUE)
 # remove all objects from current workspace
@@ -32,7 +31,7 @@ d <- read.csv("./dataset/cereal_dillons.csv", header=TRUE, sep=",")
 
 We are under the impression that supermarkets place cereals strategically on shelves in order to increase sales. For this reason, a random sample of size 10 was taken from each of the four shelves at a Dillons grocery store in Manhattan, KS in order to answer our question: Does the cereal's nutritional composition have a significant effect on its shelving placement? 
 
-We chose the multinomial regression model to answer this question since the dependent variable, the probability of the cereal being placed on the shelf, has more than two categories. What we found is that cereal with high sugar content is placed on the second shelf (from the bottom) while cereal with low sugar content is placed on teh third shelf (from the bottom).  
+We chose the multinomial regression model to answer this question since the dependent variable, the probability of the cereal being placed on the shelf, has more than two categories. What we found is that cereal with high sugar content is placed on the second shelf (from the bottom) while cereal with low sugar content is placed on the third shelf (from the bottom).  
 
 **EDA**
 
@@ -191,17 +190,6 @@ log(\frac{\hat{\pi}_{\text{shelf} = 4}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.39 -
 Based on the likelihood ratio test, sugar and sodium are important explanatory variables in determining where the cereal will be placed on the shelf. On the other hand, there is not sufficient evidence that the fat variable has an effect on the shelf placement.
 
 **Question E: Show that there are no significant interactions among the explanatory variables (including an interaction among all three variables).**
-
-xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxo
-TODO: It's a cool library. Bilder does not use this library though. If we wanted to include it, we have to explain the function extensively. Plus, I don't think this section is quite necessary to answer the question. 
-
-```{r}
-pairs.panels(norm.d[,c("sugar", "fat", "sodium")])
-```
-
-Looking at the correlation between the three explanatory variables, there does not appear to be any strong relationships as the correlation coefficients are all less than 0.5 in magnitude.
-
-xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxo
 
 To look at whether we need interactions within our model, we can create a saturated model and run an Anova test to see if any interactions have significance.
 
