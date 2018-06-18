@@ -100,14 +100,9 @@ legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number",
        legend = seq(1, 4), col = seq(1, 4), lty = seq(1, 4))
 ```
 
-The orange density plot in each graph signifies the density plot for all shelves. As can be seen from the graph, the distribution of sugar per serving appears to be bimodal with the main peak having a wider spread than the smaller one. This is in part due to the second shelf having higher sugar content compared to the rest of the shelves. Also, it is possible that within one shelf, cereal types change from one end of the shelf to the other. 
+The orange density plot in each graph signifies the density plot for all shelves. As can be seen from the graph, the distribution of sugar per serving appears to be bimodal with the main peak having a wider spread than the smaller one. This is in part due to the second shelf having cereals with higher sugar content compared to those on the other shelves. Also, it is possible that within one shelf, cereal types change from one end of the shelf to the other, attributing to the bimodal shape. For example, cereals with higher sugar, fat, and sodium contents are more popular amongst children while adults might prefer a healthier alternative. It comes to no surprise that the second shelf also has a bimodal shape with cereals having higher fat and sodium content than those placed on the other shelves. In contrast, the third shelf seems to carry healthier alternative cereals with higher fat and lower sugar and sodium content. The density plot of fat per serving and sodium per serving, although appearing bimodal in shape, are not as distinct. The distribution of fat per serving is more positively skewed with few cereals having higher fat content overall while the distribution of sodium per serving is more negatively skewed with few cereals having less sodium content overall.
 
-
-
-the distribution appears to be bimodal with the main peak at around 290 and a lower peak around 670
-the spread of the peak around the main mode is wider than that around the smaller mode
-
-TODO: explain findings that there appears two groups within each shelf
+In the next section, we construct a side-by-side boxplots as well as a parallel coordinates plot to validate our univariate analysis.
 
 ## Question B: Bivariate analysis
 
@@ -127,16 +122,7 @@ boxplot(formula = sodium ~ shelf, data = norm.d, ylab = "Sodium", xlab = "Shelf"
 stripchart(x = norm.d$sodium ~ norm.d$shelf, lwd = 2, col = "red", method = "jitter", vertical = TRUE, pch = 1, add = TRUE)
 ```
 
-TODO:
-
-1: separation of high sugar and low sugar
-2: separation of high fat
-some outliers
-
-1: sugar 2, fat 4, sodium 1
-2: sugar 1, fat 1, sodium 2
-3: sugar 4, fat 3, sodium 3
-4: sugar 3, fat 2, sodium 4
+Although there are few outliers in the second shelf in terms of fat per serving, it does not appear to be outside of the realm of possibility if compared to the cereals in the first and third shelves. 
 
 **Also, construct a parallel coordinates plot for the explanatory variables and the shelf number. Discuss if possible content differences exist among the shelves.**
 
@@ -152,6 +138,7 @@ From this parallel coordinates plot, we see that:
 3. Most cereals overlap in sugar and sodium levels but range in fat levels.
 
 ```{r}
+# print out the mean and standard deviation of each explanatory variable
 norm.d %>% 
   group_by(shelf) %>% 
   summarise(mean.sugar=mean(sugar), sd.sugar=sd(sugar), 
@@ -159,27 +146,27 @@ norm.d %>%
             mean.sodium=mean(sodium), sd.sodium=sd(sodium))
 ```
 
+What we noticed is similar to what we have noticed in our univariate analysis. The second shelf has higher sugar, fat, and sodium per serving in general. In addition, the first shelf has higher sodium levels as well as broader range in terms of sugar and fat content similar to the third shelf. 
+
 # Question C: 
  
 **The response has values of 1, 2, 3, and 4. Under what setting would it be desirable to take into account ordinality. Do you think this occurs here?**
 
-Cereal manufacturers are willing to pay supermarkets more if their product was strategically placed on shelves where it can increase sales.
-Bad cereal is placed at shelf 2, 1, 3, 4
+Cereal manufacturers are willing to pay supermarkets more if their product was strategically placed on shelves where it can increase sales. Under this condition, it would be desirable to take ordinality into account. In the case of the 40 samples randomly chosen at Dillons grocery store, it seems like this is the case. Cereals with higher sugar, fat, and sodium levels are placed on the second shelf, and the bimodal shape in the density plot diagrams mentioned earlier appears to indicate that there are cereal options for children and adults alike. The third shelf has healthier alternatives with higher fat and lower sugar and sodium servings, and the first and fourth shelves are similar except that the first shelf has higher sodium content with broader deviation. Based on this reasoning, we could rank the importance of the shelves as follows: 2 > 3 > 1 > 4. Without sales data to backup our reasonings, the ordinality of the shelves that we derive from guess work can be considered a moot point. 
 
 ```{r}
 # apply ordinality 
-norm.d$shelfFO <- factor(norm.d$shelf, levels=c(2, 1, 3, 4), ordered=TRUE)
+norm.d$shelfFO <- factor(norm.d$shelf, levels=c(2, 3, 1, 4), ordered=TRUE)
 levels(norm.d$shelfFO)
 ```
 
 # Question D: Modeling
 
-Since there are 4 shelf categories that a cereal box can be placed on, we will be using a multinomial regression model. Our goal is to model how the nutritional content affects a cereal’s corresponding probabilities each shelf category.
+Since there are 4 shelf categories that a cereal box can be placed on, we will be using a multinomial regression model. Our goal is to model how the nutritional content affects a cereal’s corresponding probabilities in each shelf category.
 
-Multinomial logistic regression does not assume normality, linearity, or homoscedasticity. However, it does assume independence among the dependent variable choices meaning that the membership in one category is not related to membership in another category. Additionally, multinomial logistic regression assumes no complete separation.
+Multinomial logistic regression does not assume normality, linearity, or homoscedasticity. However, it does assume independence among the dependent variable choices meaning that the membership in one category is not related to membership in another category. As of right now, we can assume that independence is met since the nutritional content of cereal A, for example, does not affect the nutritional content of cereal B and therefore its product placement on the shelf. Additionally, multinomial logistic regression assumes no complete separation.
 
 **Estimate a multinomial regression model with linear forms of the sugar, fat, and sodium variables. Perform LRTs to examine the importance of each explanatory variable.**
-
 
 ```{r}
 # estimate multinomial regression model 
@@ -190,12 +177,13 @@ Anova(m)
 ```
 
 ```{r}
+# estimate multinomial regression model if shelves have ordinality
 m.fo <- multinom(formula = shelfFO ~ sugar + fat + sodium, data = norm.d)
 summary(m.fo)
-```
-```{r}
+# perform LRT to examine importance of each variable
 Anova(m.fo)
 ```
+
 
 TODO: explain 
 Fat not significant
