@@ -204,7 +204,7 @@ log(\frac{\hat{\pi}_{\text{shelf} = 4}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.39 -
 * A one-unit increase in the variable fat is associated with the decrease in the log odds of being in shelf 4 versus shelf 2 in the amount of 4.93. In other words, if the variable fat increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 4. 
 * A one-unit increase in the variable sodium is associated with the decrease in the log odds of being in shelf 4 versus shelf 2 in the amount of 7.19. In other words, if the variable sodium increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 4.
 
-Based on the likelihood ratio test, sugar and sodium are important explanatory variables in determining where the cereal will be placed on the shelf. On the other hand, there is not sufficient evidence that the fat variable has an 
+Based on the likelihood ratio test, sugar and sodium are important explanatory variables in determining where the cereal will be placed on the shelf. On the other hand, there is not sufficient evidence that the fat variable has an effect on the shelf placement.
 
 # Question E: 
 
@@ -242,9 +242,9 @@ fat <- 0.5
 sodium <- 130
 # predict Apple Jack's shelf placement
 predict(object = m, 
-        data.frame(sugar = sugar/serving, 
-                   fat = fat/serving,
-                   sodium = sodium/serving), 
+        data.frame(sugar = (sugar/serving - min(adj.d$sugar))/(max(adj.d$sugar)-min(adj.d$sugar)),
+                   fat = (fat/serving - min(adj.d$fat))/(max(adj.d$fat)-min(adj.d$fat)),
+                   sodium = (sodium/serving - min(adj.d$sodium))/(max(adj.d$sodium)-min(adj.d$sodium))),
         type = "probs")
 ```
 
