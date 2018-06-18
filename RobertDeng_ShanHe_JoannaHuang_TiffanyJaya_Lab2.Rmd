@@ -151,13 +151,6 @@ What we noticed is similar to what we have noticed in our univariate analysis. T
  
 **The response has values of 1, 2, 3, and 4. Under what setting would it be desirable to take into account ordinality. Do you think this occurs here?**
 
-Cereal manufacturers are willing to pay supermarkets more if their product was strategically placed on shelves where it can increase sales. Under this condition, it would be desirable to take ordinality into account. In the case of the 40 samples randomly chosen at Dillons grocery store, it seems like this is the case. Cereals with higher sugar, fat, and sodium levels are placed on the second shelf, and the bimodal shape in the density plot diagrams mentioned earlier appears to indicate that there are cereal options for children and adults alike. The third shelf has healthier alternatives with higher fat and lower sugar and sodium servings, and the first and fourth shelves are similar except that the first shelf has higher sodium content with broader deviation. Based on this reasoning, we could rank the importance of the shelves as follows: 2 > 3 > 1 > 4. Without sales data to backup our reasonings, the ordinality of the shelves that we derive from guess work can be considered a moot point. 
-
-```{r}
-# apply ordinality 
-norm.d$shelfFO <- factor(norm.d$shelf, levels=c(2, 3, 1, 4), ordered=TRUE)
-levels(norm.d$shelfFO)
-```
 
 # Question D: Modeling
 
@@ -168,20 +161,17 @@ Multinomial logistic regression does not assume normality, linearity, or homosce
 **Estimate a multinomial regression model with linear forms of the sugar, fat, and sodium variables. Perform LRTs to examine the importance of each explanatory variable.**
 
 ```{r}
+# set shelf 2 as the reference point
+norm.d$shelf <- factor(norm.d$shelf)
+norm.d$shelf <- relevel(norm.d$shelf, ref="2")
 # estimate multinomial regression model 
-m <- multinom(formula = shelfFO ~ sugar + fat + sodium, data = norm.d)
+m <- multinom(formula = shelf ~ sugar + fat + sodium, data = norm.d)
 summary(m)
 # perform LRT to examine importance of each variable
 Anova(m)
 ```
 
-$$\begin{aligned}
-log(\frac{\hat{\pi}_{\text{shelf} = 3}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.78 - 14.91(\text{sugar}) - 4.62(\text{fat}) - 7.49(\text{sodium}) + \varepsilon
-\end{aligned}$$
-
-* A one-unit increase in the variable sugar is associated with the decrease in the log odds of being in shelf 3 versus shelf 2 in the amount of 14.91. In other words, if the variable sugar increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 3.
-* A one-unit increase in the variable fat is associated with the decrease in the log odds of being in shelf 3 versus shelf 2 in the amount of 4.62. In other words, if the variable fat increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 3. 
-* A one-unit increase in the variable sodium is associated with the decrease in the log odds of being in shelf 3 versus shelf 2 in the amount of 7.49. In other words, if the variable sodium increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 3.
+From the coefficients table in the output, we obtain the estimated model as: 
 
 $$\begin{aligned}
 log(\frac{\hat{\pi}_{\text{shelf} = 1}}{\hat{\pi}_{\text{shelf} = 2}}) = -6.90 - 2.69(\text{sugar}) - 4.06(\text{fat}) + 17.49(\text{sodium}) + \varepsilon
@@ -192,6 +182,14 @@ log(\frac{\hat{\pi}_{\text{shelf} = 1}}{\hat{\pi}_{\text{shelf} = 2}}) = -6.90 -
 * A one-unit increase in the variable sodium is associated with the increase in the log odds of being in shelf 1 versus shelf 2 in the amount of 17.49. In other words, if the variable sodium increases by one unit, the chances of being placed in shelf 1 is higher than being in shelf 2.
 
 $$\begin{aligned}
+log(\frac{\hat{\pi}_{\text{shelf} = 3}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.78 - 14.91(\text{sugar}) - 4.62(\text{fat}) - 7.49(\text{sodium}) + \varepsilon
+\end{aligned}$$
+
+* A one-unit increase in the variable sugar is associated with the decrease in the log odds of being in shelf 3 versus shelf 2 in the amount of 14.91. In other words, if the variable sugar increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 3.
+* A one-unit increase in the variable fat is associated with the decrease in the log odds of being in shelf 3 versus shelf 2 in the amount of 4.62. In other words, if the variable fat increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 3. 
+* A one-unit increase in the variable sodium is associated with the decrease in the log odds of being in shelf 3 versus shelf 2 in the amount of 7.49. In other words, if the variable sodium increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 3.
+
+$$\begin{aligned}
 log(\frac{\hat{\pi}_{\text{shelf} = 4}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.39 - 14.09(\text{sugar}) - 4.93(\text{fat}) - 7.19(\text{sodium}) + \varepsilon
 \end{aligned}$$
 
@@ -199,7 +197,7 @@ log(\frac{\hat{\pi}_{\text{shelf} = 4}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.39 -
 * A one-unit increase in the variable fat is associated with the decrease in the log odds of being in shelf 4 versus shelf 2 in the amount of 4.93. In other words, if the variable fat increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 4. 
 * A one-unit increase in the variable sodium is associated with the decrease in the log odds of being in shelf 4 versus shelf 2 in the amount of 7.19. In other words, if the variable sodium increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 4.
 
-Based on the likelihood ratio test, sugar and sodium are important explanatory variables in determining where the cereal will be placed on the shelf.
+Based on the likelihood ratio test, sugar and sodium are important explanatory variables in determining where the cereal will be placed on the shelf. On the other hand, there is not sufficient evidence that the fat variable has an 
 
 # Question E: 
 
