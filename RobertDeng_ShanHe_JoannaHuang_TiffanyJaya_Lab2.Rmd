@@ -286,10 +286,14 @@ legend("topleft", legend = c(1, 2, 3, 4),
 
 
 ```{r}
-# dev.off()  # Create plot for book
-# Verify plot is correct
-density.values<-seq(from = 0.8, to = 1.6, by = 0.1)
-data.frame(density.values, round(predict(object = mod.fit.nom.density, newdata = data.frame(density = density.values), type = "probs"), 2))
+# verify plot is correct
+sugar.values <- seq(from = 0, to = 1, by = 0.1)
+data.frame(sugar.values, 
+           round(predict(object = m, 
+                         newdata = data.frame(sugar = density.values, 
+                                                          fat = mean(norm.d$fat), 
+                                                          sodium = mean(norm.d$sodium)), 
+                         type = "probs"), 2))
 ```
 
 
