@@ -151,6 +151,13 @@ What we noticed is similar to what we have noticed in our univariate analysis. T
  
 **The response has values of 1, 2, 3, and 4. Under what setting would it be desirable to take into account ordinality. Do you think this occurs here?**
 
+Cereal manufacturers are willing to pay supermarkets more if their product was strategically placed on shelves where it can increase sales. Under this condition, it would be desirable to take ordinality into account. Based on past studies on store design and visual merchandising, retailers divide vertical shelves into 4 zones: 1) Stretch Level 2) Eye Level 3) Touch Level 4) Stoop Level. Eye Level and Touch Level are the most profitable with adults and children respectively given what’s easily seen and obtainable. Furthermore, since it takes a little less physical effort to tip toe for the Stretch Level than crouch down for the Stoop Level, we will assume the former is slightly more profitable as well. Based on this reasoning, we will rank the importance of the shelves as follows: 3 > 2 > 4 > 1. 
+
+```{r}
+# apply ordinality
+norm.d$shelfF0 <- factor(norm.d$shelf, levels=c(3,2,4,1), ordered=TRUE)
+levels(norm.d$shelfF0)
+```
 
 # Question D: Modeling
 
