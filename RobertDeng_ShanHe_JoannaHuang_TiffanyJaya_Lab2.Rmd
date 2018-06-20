@@ -29,7 +29,7 @@ d <- read.csv("./dataset/cereal_dillons.csv", header=TRUE, sep=",")
 
 **Introduction**
 
-We are under the impression that supermarkets place cereals strategically on shelves in order to increase sales. For this reason, we use a random sample of size 10 taken from each of the four shelves at a Dillons grocery store in Manhattan, KS to answer our question: Does the cereal's nutritional composition have a significant effect on its shelving placement?  
+We are under the impression that supermarkets place cereals strategically on shelves in order to increase sales. For this reason, we use a random sample of size 10 from each of the four shelves at a Dillons grocery store in Manhattan, KS to answer our question: Does the cereal's nutritional composition have a significant effect on its shelving placement?  
 
 We chose the multinomial regression model to answer this question since the dependent variable, the probability of the cereal being placed on the shelf, has more than two categories. What we found is that cereals with high sugar content tend to be placed on the second shelf (from the bottom) while cereals with low sugar content tend to be placed on the third shelf (from the bottom).  
 
@@ -95,9 +95,9 @@ legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number",
        legend = seq(1, 4), col = seq(1, 4), lty = seq(1, 4))
 ```
 
-The orange density plot in each graph signifies the density plot for all shelves. As can be seen from the graph, the distribution of sugar per serving appears to be bimodal with the main peak having a wider spread than the smaller one. This is in part due to the second shelf having cereals with higher sugar content compared to those on the other shelves. Also, it is possible that within one shelf, cereal types change from one end of the shelf to the other, attributing to the bimodal shape. 
+The orange density plot in each graph signifies the density plot for all shelves. As can be seen from the graph, the distribution of sugar per serving appears to be bimodal with the main peak having a wider spread than the smaller one. This is in part due to the second shelf having cereals with higher sugar content compared to those on the other shelves. Also, it is possible that within one shelf, cereal types change from one end of the shelf to the other, attributing to the bimodal shape. For example, within one shelf, supermarkets can place cereals that cater to both children and adults. Cereals with higher sugar, fat, and sodium contents are more popular amongst children while adults might prefer a healthier alternative. The second shelf (which is eye level for a child) caters more to children having cereals with higher sugar, fat, and sodium content than those placed on other shelves. Yet, its distribution for each nutritional composition is bimodal which can be potentially explained by the need for healthier alternatives desirable by adults. 
 
-Clues of potential preference differences between children and adult is also shown through the different cereal nutritional compositions of each shelf. For example, cereals with higher sugar, fat, and sodium contents are more popular amongst children while adults might prefer a healthier alternative. It comes to no surprise that the second shelf (which is eye level for a child) also has a bimodal shape with cereals having higher fat and sodium content than those placed on the other shelves. In contrast, the third shelf (which is eye level for an adult) seems to carry healthier alternative cereals with lower fat, sugar, and sodium level. The density plot of fat per serving and sodium per serving, although appearing bimodal in shape, are not as distinct. The distribution of fat per serving is more positively skewed with few cereals having higher fat content overall while the distribution of sodium per serving is more negatively skewed with few cereals having less sodium content overall.
+Clues of potential preference differences between children and adult are also shown through the different cereal nutritional compositions of each shelf. For example, unlike the second shelf which seems to target children, the third shelf (which is eye level for an adult) carries cereals with lower sugar, fat, and sodium level that fall in line more to the adult demographic. The density plot of fat per serving and sodium per serving, although appearing bimodal in shape, are not as distinct. The distribution of fat per serving is more positively skewed with few cereals having higher fat content overall while the distribution of sodium per serving is more negatively skewed with few cereals having less sodium content overall.
 
 **Question B: Construct side-by-side box plots with dot plots overlaid for each of the explanatory variables.**
 
@@ -127,7 +127,7 @@ legend("bottomleft", cex = 0.8, inset = .05, title = "Shelf Number",  bg = "whit
 
 From this parallel coordinates plot, we see that:
 
-1. Shelf 1 generally has higher sodium levels and lower fat levels.
+1. Shelf 1 generally has higher sodium levels.
 2. Shelf 2 generally has higher sugar levels.
 3. Most cereals overlap in sugar and sodium levels but range in fat levels.
 4. Shelf 3 has the highest variance overall in sugar, fat and sodium levels.
@@ -162,6 +162,10 @@ m <- multinom(formula = shelf ~ sugar + fat + sodium, data = norm.d)
 summary(m)
 # perform LRT to examine importance of each variable
 Anova(m)
+#select standard deviations as proper c values for coefficient interpretation
+c.1 <- c(1, sd(adj.d[(adj.d$shelf == 1), ]$sugar), sd(adj.d[(adj.d$shelf == 1), ]$fat), sd(adj.d[(adj.d$shelf == 1), ]$sodium))
+c.2 <- c(1, sd(adj.d[(adj.d$shelf == 2), ]$sugar), sd(adj.d[(adj.d$shelf == 2), ]$fat), sd(adj.d[(adj.d$shelf == 2), ]$sodium))
+c.3 <- c(1, sd(adj.d[(adj.d$shelf == 3), ]$sugar), sd(adj.d[(adj.d$shelf == 3), ]$fat), sd(adj.d[(adj.d$shelf == 3), ]$sodium))
 ```
 
 From the coefficients table in the output, we obtain the estimated model as: 
@@ -170,22 +174,14 @@ $$\begin{aligned}
 log(\frac{\hat{\pi}_{\text{shelf} = 1}}{\hat{\pi}_{\text{shelf} = 2}}) = -6.90 - 2.69(\text{sugar}) - 4.06(\text{fat}) + 17.49(\text{sodium}) 
 \end{aligned}$$
 
-
 ```{r}
-#select standard deviations as proper c values for coefficient interpretation
-c.1 <- c(1, sd(adj.d[(adj.d$shelf == 1), ]$sugar), sd(adj.d[(adj.d$shelf == 1), ]$fat), sd(adj.d[(adj.d$shelf == 1), ]$sodium))
-c.2 <- c(1, sd(adj.d[(adj.d$shelf == 2), ]$sugar), sd(adj.d[(adj.d$shelf == 2), ]$fat), sd(adj.d[(adj.d$shelf == 2), ]$sodium))
-c.3 <- c(1, sd(adj.d[(adj.d$shelf == 3), ]$sugar), sd(adj.d[(adj.d$shelf == 3), ]$fat), sd(adj.d[(adj.d$shelf == 3), ]$sodium))
-
 c.1
 exp( c.1 * coefficients(m)[1, ])
 ```
 
-From the coefficients table in the output, we obtain the estimated model as: 
-
-* The estimated odds of being in shelf 1 vs shelf 2 change by 0.64 times for a 0.17g/g of serving increase in sugar content holding the other variable constant.
-* The estimated odds of being in shelf 1 vs shelf 2 change by 0.87 times for a 0.04g/g of serving increase in fat content holding the other variable constant.
-* The estimated odds of being in shelf 1 vs shelf 2 change by 1.03 times for a 0.002mg/g of serving increase in sodium content holding the other variable constant.
+* The estimated odds of being in shelf 1 vs shelf 2 change by 0.64 times for a 0.17 grams per grams of serving increase in sugar content holding the other variable constant.
+* The estimated odds of being in shelf 1 vs shelf 2 change by 0.87 times for a 0.04 grams per grams of serving increase in fat content holding the other variable constant.
+* The estimated odds of being in shelf 1 vs shelf 2 change by 1.03 times for a 0.002 grams per grams of serving increase in sodium content holding the other variable constant.
 
 $$\begin{aligned}
 log(\frac{\hat{\pi}_{\text{shelf} = 3}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.78 - 14.91(\text{sugar}) - 4.62(\text{fat}) - 7.49(\text{sodium})
@@ -196,9 +192,9 @@ c.2
 exp( c.2 * coefficients(m)[2, ])
 ```
 
-* The estimated odds of being in shelf 3 vs shelf 2 change by 0.26 times for a 0.09g/g of serving increase in sugar content holding the other variable constant.
-* The estimated odds of being in shelf 3 vs shelf 2 change by 0.88 times for a 0.03g/g of serving increase in fat content holding the other variable constant.
-* The estimated odds of being in shelf 3 vs shelf 2 change by 0.99 times for a 0.002mg/g of serving increase in sodium content holding the other variable constant.
+* The estimated odds of being in shelf 3 vs shelf 2 change by 0.26 times for a 0.09 grams per grams of serving increase in sugar content holding the other variable constant.
+* The estimated odds of being in shelf 3 vs shelf 2 change by 0.88 times for a 0.03 grams per grams of serving increase in fat content holding the other variable constant.
+* The estimated odds of being in shelf 3 vs shelf 2 change by 0.99 times for a 0.002 grams per grams of serving increase in sodium content holding the other variable constant.
 
 $$\begin{aligned}
 log(\frac{\hat{\pi}_{\text{shelf} = 4}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.39 - 14.09(\text{sugar}) - 4.93(\text{fat}) - 7.19(\text{sodium}) 
@@ -209,9 +205,9 @@ c.3
 exp( c.3 * coefficients(m)[3, ])
 ```
 
-* The estimated odds of being in shelf 4 vs shelf 2 change by 0.11 times for a 0.16g/g of serving increase in sugar content holding the other variable constant.
-* The estimated odds of being in shelf 4 vs shelf 2 change by 0.87 times for a 0.03g/g of serving increase in fat content holding the other variable constant.
-* The estimated odds of being in shelf 4 vs shelf 2 change by 0.98 times for a 0.003mg/g of serving increase in sodium content holding the other variable constant.
+* The estimated odds of being in shelf 4 vs shelf 2 change by 0.11 times for a 0.16 grams per grams of serving increase in sugar content holding the other variable constant.
+* The estimated odds of being in shelf 4 vs shelf 2 change by 0.87 times for a 0.03 grams per grams of serving increase in fat content holding the other variable constant.
+* The estimated odds of being in shelf 4 vs shelf 2 change by 0.98 times for a 0.003 grams per grams of serving increase in sodium content holding the other variable constant.
 
 Based on the likelihood ratio test, sugar and sodium are important explanatory variables in determining where the cereal will be placed on the shelf. On the other hand, there is not sufficient evidence that the fat variable has an effect on the shelf placement.
 
@@ -350,18 +346,15 @@ ci.or.shelf.1 <- exp(sd.d * conf.beta[2:4, 1:2, 1])
 ci.or.shelf.2 <- exp(sd.d * conf.beta[2:4, 1:2, 2])
 ci.or.shelf.3 <- exp(sd.d * conf.beta[2:4, 1:2, 3])
 
-print('odd ratio for shelf 1 vs shelf 2:')
-#round(exp(sd.d * beta.hat[1, 2:4]), 2)
+# odd ratio for shelf 1 vs shelf 2:
 round(1/exp(sd.d * beta.hat[1, 2:4]), 2)
 round(data.frame(low=1/ci.or.shelf.1[,2], up=1/ci.or.shelf.1[,1]), 2)
 
-print('odd ratio for shelf 3 vs shelf 2:')
-#round(exp(sd.d * beta.hat[2, 2:4]), 2)
+# odd ratio for shelf 3 vs shelf 2:
 round(1/exp(sd.d * beta.hat[2, 2:4]), 2)
 round(data.frame(low=1/ci.or.shelf.2[,2], up=1/ci.or.shelf.2[,1]), 2)
 
-print('odd ratio for shelf 4 vs shelf 2:')
-#round(exp(sd.d * beta.hat[3, 2:4]), 2)
+# odd ratio for shelf 4 vs shelf 2:
 round(1/exp(sd.d * beta.hat[3, 2:4]), 2)
 round(data.frame(low=1/ci.or.shelf.3[,2], up=1/ci.or.shelf.3[,1]), 2)
 ```
