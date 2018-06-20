@@ -29,7 +29,7 @@ d <- read.csv("./dataset/cereal_dillons.csv", header=TRUE, sep=",")
 
 **Introduction**
 
-We are under the impression that supermarkets place cereals strategically on shelves in order to increase sales. For this reason, we use a random sample of size 10 was taken from each of the four shelves at a Dillons grocery store in Manhattan, KS to answer our question: Does the cereal's nutritional composition have a significant effect on its shelving placement?  
+We are under the impression that supermarkets place cereals strategically on shelves in order to increase sales. For this reason, we use a random sample of size 10 taken from each of the four shelves at a Dillons grocery store in Manhattan, KS to answer our question: Does the cereal's nutritional composition have a significant effect on its shelving placement?  
 
 We chose the multinomial regression model to answer this question since the dependent variable, the probability of the cereal being placed on the shelf, has more than two categories. What we found is that cereals with high sugar content tend to be placed on the second shelf (from the bottom) while cereals with low sugar content tend to be placed on the third shelf (from the bottom).  
 
