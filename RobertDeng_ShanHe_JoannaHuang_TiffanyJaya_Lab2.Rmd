@@ -29,7 +29,7 @@ d <- read.csv("./dataset/cereal_dillons.csv", header=TRUE, sep=",")
 
 **Introduction**
 
-We are under the impression that supermarkets place cereals strategically on shelves in order to increase sales. For this reason, a random sample of size 10 was taken from each of the four shelves at a Dillons grocery store in Manhattan, KS in order to answer our question: Does the cereal's nutritional composition have a significant effect on its shelving placement? 
+We are under the impression that supermarkets place cereals strategically on shelves in order to increase sales. For this reason, we use a random sample of size 10 was taken from each of the four shelves at a Dillons grocery store in Manhattan, KS to answer our question: Does the cereal's nutritional composition have a significant effect on its shelving placement?  
 
 We chose the multinomial regression model to answer this question since the dependent variable, the probability of the cereal being placed on the shelf, has more than two categories. What we found is that cereals with high sugar content tend to be placed on the second shelf (from the bottom) while cereals with low sugar content tend to be placed on the third shelf (from the bottom).  
 
@@ -95,7 +95,9 @@ legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number",
        legend = seq(1, 4), col = seq(1, 4), lty = seq(1, 4))
 ```
 
-The orange density plot in each graph signifies the density plot for all shelves. As can be seen from the graph, the distribution of sugar per serving appears to be bimodal with the main peak having a wider spread than the smaller one. This is in part due to the second shelf having cereals with higher sugar content compared to those on the other shelves. Also, it is possible that within one shelf, cereal types change from one end of the shelf to the other, attributing to the bimodal shape. For example, cereals with higher sugar, fat, and sodium contents are more popular amongst children while adults might prefer a healthier alternative. It comes to no surprise that the second shelf also has a bimodal shape with cereals having higher fat and sodium content than those placed on the other shelves. In contrast, the third shelf seems to carry healthier alternative cereals with higher fat and lower sugar and sodium level. The density plot of fat per serving and sodium per serving, although appearing bimodal in shape, are not as distinct. The distribution of fat per serving is more positively skewed with few cereals having higher fat content overall while the distribution of sodium per serving is more negatively skewed with few cereals having less sodium content overall.
+The orange density plot in each graph signifies the density plot for all shelves. As can be seen from the graph, the distribution of sugar per serving appears to be bimodal with the main peak having a wider spread than the smaller one. This is in part due to the second shelf having cereals with higher sugar content compared to those on the other shelves. Also, it is possible that within one shelf, cereal types change from one end of the shelf to the other, attributing to the bimodal shape. 
+
+Clues of potential preference differences between children and adult is also shown through the different cereal nutritional compositions of each shelf. For example, cereals with higher sugar, fat, and sodium contents are more popular amongst children while adults might prefer a healthier alternative. It comes to no surprise that the second shelf (which is eye level for a child) also has a bimodal shape with cereals having higher fat and sodium content than those placed on the other shelves. In contrast, the third shelf (which is eye level for an adult) seems to carry healthier alternative cereals with lower fat, sugar, and sodium level. The density plot of fat per serving and sodium per serving, although appearing bimodal in shape, are not as distinct. The distribution of fat per serving is more positively skewed with few cereals having higher fat content overall while the distribution of sodium per serving is more negatively skewed with few cereals having less sodium content overall.
 
 **Question B: Construct side-by-side box plots with dot plots overlaid for each of the explanatory variables.**
 
@@ -113,7 +115,7 @@ boxplot(formula = sodium ~ shelf, data = norm.d, ylab = "Sodium", xlab = "Shelf"
 stripchart(x = norm.d$sodium ~ norm.d$shelf, lwd = 2, col = "red", method = "jitter", vertical = TRUE, pch = 1, add = TRUE)
 ```
 
-Although there are few outliers in the second shelf in terms of fat per serving, it does not appear to be outside of the realm of possibility if compared to the cereals in the first and third shelves. 
+Although there are a few outliers in the second shelf in terms of fat per serving, it does not appear to be outside of the realm of possibility if compared to the cereals in the first and third shelves. 
 
 **Also, construct a parallel coordinates plot for the explanatory variables and the shelf number. Discuss if possible content differences exist among the shelves.**
 
@@ -125,9 +127,10 @@ legend("bottomleft", cex = 0.8, inset = .05, title = "Shelf Number",  bg = "whit
 
 From this parallel coordinates plot, we see that:
 
-1. Shelf 1 generally has higher sodium levels.
+1. Shelf 1 generally has higher sodium levels and lower fat levels.
 2. Shelf 2 generally has higher sugar levels.
 3. Most cereals overlap in sugar and sodium levels but range in fat levels.
+4. Shelf 3 has the highest variance overall in sugar, fat and sodium levels.
 
 ```{r}
 # print out the mean and standard deviation 
@@ -348,4 +351,4 @@ We see that cereals with high content of sugar is more likely to be placed at sh
 
 **Conclusion**
 
-Our findings seem to confirm that cereals are strategically placed depending on the target market with sugar per serving being the best indicator of the shelf placement. Cereals with high sugar content are placed on the second shelf, also known as the "touch level", reachable by children. Healthier alternatives with lower sugar are placed on the second shelf where it hits at approximately adult eye level. If the cereal was slightly more sweet than the ones on the third shelf, it was placed at fourth shelf within stretching distance of an average adult height. The last shelf closest to the floor appears to store a variety of different types of cereals with different nutritional content. Supplemental sales data can confirm the importance of the shelf order that we have found in this initial research.
+Our findings seem to confirm that cereals are strategically placed depending on the target market with sugar per serving being the best indicator of the shelf placement. Cereals with high sugar content are placed on the second shelf, also known as the "touch level", reachable by children. Healthier alternatives with lower sugar are placed on the third shelf where it hits at approximately adult eye level. If the cereal was slightly more sweet than the ones on the third shelf, it was placed at fourth shelf within stretching distance of an average adult height. The last shelf closest to the floor appears to store a variety of different types of cereals with different nutritional content. Supplemental sales data can confirm the importance of the shelf order that we have found in this initial research.
