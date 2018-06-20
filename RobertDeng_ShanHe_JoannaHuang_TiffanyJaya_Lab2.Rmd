@@ -170,25 +170,48 @@ $$\begin{aligned}
 log(\frac{\hat{\pi}_{\text{shelf} = 1}}{\hat{\pi}_{\text{shelf} = 2}}) = -6.90 - 2.69(\text{sugar}) - 4.06(\text{fat}) + 17.49(\text{sodium}) 
 \end{aligned}$$
 
-* A one-unit increase in the variable sugar is associated with the decrease in the log odds of being in shelf 1 versus shelf 2 in the amount of 2.69. In other words, if the variable sugar increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 1.
-* A one-unit increase in the variable fat is associated with the decrease in the log odds of being in shelf 1 versus shelf 2 in the amount of 4.06. In other words, if the variable fat increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 1. 
-* A one-unit increase in the variable sodium is associated with the increase in the log odds of being in shelf 1 versus shelf 2 in the amount of 17.49. In other words, if the variable sodium increases by one unit, the chances of being placed in shelf 1 is higher than being in shelf 2.
+
+```{r}
+#select standard deviations as proper c values for coefficient interpretation
+c.1 <- c(1, sd(adj.d[(adj.d$shelf == 1), ]$sugar), sd(adj.d[(adj.d$shelf == 1), ]$fat), sd(adj.d[(adj.d$shelf == 1), ]$sodium))
+c.2 <- c(1, sd(adj.d[(adj.d$shelf == 2), ]$sugar), sd(adj.d[(adj.d$shelf == 2), ]$fat), sd(adj.d[(adj.d$shelf == 2), ]$sodium))
+c.3 <- c(1, sd(adj.d[(adj.d$shelf == 3), ]$sugar), sd(adj.d[(adj.d$shelf == 3), ]$fat), sd(adj.d[(adj.d$shelf == 3), ]$sodium))
+
+c.1
+exp( c.1 * coefficients(m)[1, ])
+```
+
+From the coefficients table in the output, we obtain the estimated model as: 
+
+* The estimated odds of being in shelf 1 vs shelf 2 change by 0.64 times for a 0.17g/g of serving increase in sugar content holding the other variable constant.
+* The estimated odds of being in shelf 1 vs shelf 2 change by 0.87 times for a 0.04g/g of serving increase in fat content holding the other variable constant.
+* The estimated odds of being in shelf 1 vs shelf 2 change by 1.03 times for a 0.002mg/g of serving increase in sodium content holding the other variable constant.
 
 $$\begin{aligned}
 log(\frac{\hat{\pi}_{\text{shelf} = 3}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.78 - 14.91(\text{sugar}) - 4.62(\text{fat}) - 7.49(\text{sodium})
 \end{aligned}$$
 
-* A one-unit increase in the variable sugar is associated with the decrease in the log odds of being in shelf 3 versus shelf 2 in the amount of 14.91. In other words, if the variable sugar increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 3.
-* A one-unit increase in the variable fat is associated with the decrease in the log odds of being in shelf 3 versus shelf 2 in the amount of 4.62. In other words, if the variable fat increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 3. 
-* A one-unit increase in the variable sodium is associated with the decrease in the log odds of being in shelf 3 versus shelf 2 in the amount of 7.49. In other words, if the variable sodium increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 3.
+```{r}
+c.2
+exp( c.2 * coefficients(m)[2, ])
+```
+
+* The estimated odds of being in shelf 3 vs shelf 2 change by 0.26 times for a 0.09g/g of serving increase in sugar content holding the other variable constant.
+* The estimated odds of being in shelf 3 vs shelf 2 change by 0.88 times for a 0.03g/g of serving increase in fat content holding the other variable constant.
+* The estimated odds of being in shelf 3 vs shelf 2 change by 0.99 times for a 0.002mg/g of serving increase in sodium content holding the other variable constant.
 
 $$\begin{aligned}
 log(\frac{\hat{\pi}_{\text{shelf} = 4}}{\hat{\pi}_{\text{shelf} = 2}}) = 14.39 - 14.09(\text{sugar}) - 4.93(\text{fat}) - 7.19(\text{sodium}) 
 \end{aligned}$$
 
-* A one-unit increase in the variable sugar is associated with the decrease in the log odds of being in shelf 4 versus shelf 2 in the amount of 14.09. In other words, if the variable sugar increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 4.
-* A one-unit increase in the variable fat is associated with the decrease in the log odds of being in shelf 4 versus shelf 2 in the amount of 4.93. In other words, if the variable fat increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 4. 
-* A one-unit increase in the variable sodium is associated with the decrease in the log odds of being in shelf 4 versus shelf 2 in the amount of 7.19. In other words, if the variable sodium increases by one unit, the chances of being placed in shelf 2 is higher than being in shelf 4.
+```{r}
+c.3
+exp( c.3 * coefficients(m)[3, ])
+```
+
+* The estimated odds of being in shelf 4 vs shelf 2 change by 0.11 times for a 0.16g/g of serving increase in sugar content holding the other variable constant.
+* The estimated odds of being in shelf 4 vs shelf 2 change by 0.87 times for a 0.03g/g of serving increase in fat content holding the other variable constant.
+* The estimated odds of being in shelf 4 vs shelf 2 change by 0.98 times for a 0.003mg/g of serving increase in sodium content holding the other variable constant.
 
 Based on the likelihood ratio test, sugar and sodium are important explanatory variables in determining where the cereal will be placed on the shelf. On the other hand, there is not sufficient evidence that the fat variable has an effect on the shelf placement.
 
