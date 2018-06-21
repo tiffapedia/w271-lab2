@@ -74,11 +74,11 @@ norm.d <- data.frame(shelf = adj.d$shelf,
 Now that we have adjusted the data, we can begin analyzing the explanatory variables of interest, the cereal nutrition's composition: sugar per serving, fat per serving, and sodium per serving.
 
 ```{r fig.show='hold', fig.align='center', out.width='49%', results='hide'}
-ggplot(norm.d, aes(sugar, colour = factor(shelf))) + geom_density() + ggtitle("Density Plot of Sugar (normalized)") + xlab("Sugar / Size") + ylab("Frequency")
+ggplot(norm.d, aes(sugar, colour = factor(shelf))) + geom_density() + ggtitle("Density Plot of Sugar (normalized)") + xlab("Sugar / Size") + ylab("Density")
 
-ggplot(norm.d, aes(fat, colour = factor(shelf))) + geom_density() + ggtitle("Density Plot of Fat (normalized)") + xlab("Fat / Size") + ylab("Frequency")
+ggplot(norm.d, aes(fat, colour = factor(shelf))) + geom_density() + ggtitle("Density Plot of Fat (normalized)") + xlab("Fat / Size") + ylab("Density")
 
-ggplot(norm.d, aes(sodium, colour = factor(shelf))) + geom_density() + ggtitle("Density Plot of Sodium (normalized)") + xlab("Sodium / Size") + ylab("Frequency")
+ggplot(norm.d, aes(sodium, colour = factor(shelf))) + geom_density() + ggtitle("Density Plot of Sodium (normalized)") + xlab("Sodium / Size") + ylab("Density")
 ```
 
 As can be seen from the graph, the distribution of sugar per serving appears to skew left with most products with sugar comprising more than half their size. This is in part due to the second shelf having cereals with higher sugar content compared to those on the other shelves. The density plot of fat per serving and sodium per serving, although appearing bimodal in shape, are not as distinct. The distribution of fat per serving is more right skewed with few cereals having higher fat content overall while the distribution of sodium per serving is more left skewed with few cereals having sodium less than half their content overall.
