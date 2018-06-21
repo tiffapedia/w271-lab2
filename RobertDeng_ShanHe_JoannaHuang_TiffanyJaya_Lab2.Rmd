@@ -17,6 +17,7 @@ library(Hmisc)
 library(knitr)
 library(MASS)
 library(nnet)
+library(ggplot2)
 # prevent source code from running off the page
 opts_chunk$set(tidy.opts=list(width.cutoff=70), tidy=TRUE)
 # remove all objects from current workspace
@@ -54,7 +55,7 @@ kable(summary(d[, 4:7]))
 d[!complete.cases(d),]
 ```
 
-**Question A: The explanatory variables need to be re-formatted before proceeding further. First, divide each explanatory variable by its serving size to account for the different serving sizes among the cereals. Second, re-scale each variable to be Symptoms Seizures Cardiac deficiency within 0 and 1.**
+**Question A: The explanatory variables need to be re-formatted before proceeding further. First, divide each explanatory variable by its serving size to account for the different serving sizes among the cereals. Second, re-scale each variable to be within 0 and 1.**
 
 ```{r}
 # 1. adjust for different serving sizes 
@@ -73,31 +74,14 @@ norm.d <- data.frame(shelf = adj.d$shelf,
 Now that we have adjusted the data, we can begin analyzing the explanatory variables of interest, the cereal nutrition's composition: sugar per serving, fat per serving, and sodium per serving.
 
 ```{r fig.show='hold', fig.align='center', out.width='49%', results='hide'}
-# explanatory variable: sugar
-plot(density(d$sugar_g), col = "orange", lwd = 2, ylim = c(0, 0.15), main = "Density plot of sugar per serving")
-lapply(seq(1, 4), function(shelf) lines(density(d[which(d$Shelf == shelf),]$sugar_g), col = shelf, lty = shelf))
-rug(d$sugar_g)
-legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number", 
-       legend = seq(1, 4), col = seq(1, 4), lty = seq(1, 4))
+ggplot(norm.d, aes(sugar, colour = factor(shelf))) + geom_density() + ggtitle("Density Plot of Sugar (normalized)") + xlab("Sugar / Size") + ylab("Frequency")
 
-# explanatory variable: fat
-plot(density(d$fat_g), col = "orange", lwd = 2, ylim = c(0, 1), main = "Density plot of fat per serving")
-lapply(seq(1, 4), function(shelf) lines(density(d[which(d$Shelf == shelf),]$fat_g), col = shelf, lty = shelf))
-rug(d$fat_g)
-legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number", 
-       legend = seq(1, 4), col = seq(1, 4), lty = seq(1, 4))
+ggplot(norm.d, aes(fat, colour = factor(shelf))) + geom_density() + ggtitle("Density Plot of Fat (normalized)") + xlab("Fat / Size") + ylab("Frequency")
 
-# explanatory variable: sodium
-plot(density(d$sodium_mg), col = "orange", lwd = 2, ylim = c(0, 0.015), main = "Density plot of sodium per serving")
-lapply(seq(1, 4), function(shelf) lines(density(d[which(d$Shelf == shelf),]$sodium_mg), col = shelf, lty = shelf))
-rug(d$sodium_mg)
-legend("topleft", cex = 0.8, inset = .05, title = "Shelf Number", 
-       legend = seq(1, 4), col = seq(1, 4), lty = seq(1, 4))
+ggplot(norm.d, aes(sodium, colour = factor(shelf))) + geom_density() + ggtitle("Density Plot of Sodium (normalized)") + xlab("Sodium / Size") + ylab("Frequency")
 ```
 
-The orange density plot in each graph signifies the density plot for all shelves. As can be seen from the graph, the distribution of sugar per serving appears to be bimodal with the main peak having a wider spread than the smaller one. This is in part due to the second shelf having cereals with higher sugar content compared to those on the other shelves. Also, it is possible that within one shelf, cereal types change from one end of the shelf to the other, attributing to the bimodal shape. For example, within one shelf, supermarkets can place cereals that cater to both children and adults. Cereals with higher sugar, fat, and sodium contents are more popular amongst children while adults might prefer a healthier alternative. The second shelf (which is eye level for a child) caters more to children having cereals with higher sugar, fat, and sodium content than those placed on other shelves. Yet, its distribution for each nutritional composition is bimodal which can be potentially explained by the need for healthier alternatives desirable by adults. 
-
-Clues of potential preference differences between children and adult are also shown through the different cereal nutritional compositions of each shelf. For example, unlike the second shelf which seems to target children, the third shelf (which is eye level for an adult) carries cereals with lower sugar, fat, and sodium level that fall in line more to the adult demographic. The density plot of fat per serving and sodium per serving, although appearing bimodal in shape, are not as distinct. The distribution of fat per serving is more positively skewed with few cereals having higher fat content overall while the distribution of sodium per serving is more negatively skewed with few cereals having less sodium content overall.
+As can be seen from the graph, the distribution of sugar per serving appears to skew left with most products with sugar comprising more than half their size. This is in part due to the second shelf having cereals with higher sugar content compared to those on the other shelves. The density plot of fat per serving and sodium per serving, although appearing bimodal in shape, are not as distinct. The distribution of fat per serving is more right skewed with few cereals having higher fat content overall while the distribution of sodium per serving is more left skewed with few cereals having sodium less than half their content overall.
 
 **Question B: Construct side-by-side box plots with dot plots overlaid for each of the explanatory variables.**
 
@@ -143,7 +127,9 @@ norm.d %>%
 
 **Question C: The response has values of 1, 2, 3, and 4. Under what setting would it be desirable to take into account ordinality. Do you think this occurs here?**
 
-Cereal manufacturers are willing to pay grocery stores more if their product was strategically placed on shelves where it can increase sales. Under this condition, it would be desirable to take ordinality into account. Based on past studies on store design and visual merchandising, retailers divide vertical shelves into 4 zones: 1) Stoop Level 2) Touch Level 3) Eye Level 4) Stretch Level. Eye Level and Touch Level are the most profitable with adults and children respectively given what is easily seen and obtainable. Furthermore, since it takes a little less physical effort to tip toe for the Stretch Level than crouch down for the Stoop Level, we will assume the former is slightly more profitable as well. Based on this reasoning, we will rank the importance of the shelves as follows: 3 > 2 > 4 > 1.
+Cereal manufacturers are willing to pay grocery stores more if their product was strategically placed on shelves where it can increase sales. Under this condition, it would be desirable to take ordinality into account. Based on past studies on store design and visual merchandising, retailers divide vertical shelves into 4 zones: 1) Stoop Level 2) Touch Level 3) Eye Level 4) Stretch Level. Eye Level and Touch Level are the most profitable with adults and children respectively given what is easily seen and obtainable. Furthermore, since it takes a little less physical effort to tip toe for the Stretch Level than crouch down for the Stoop Level, we will assume the former is slightly more profitable as well. Based on this reasoning, we could rank the importance of the shelves as follows: 3 > 2 > 4 > 1.
+
+However, given very little information about the context of the supermarket and customer demographics, the priority toss up between shelves 2 and 3 make it inconclusive to definitively rank shelves. Marketing science can make arguments for either and statistically we don't have enough information, hence ultimately we will stick to the nominal response model.
 
 **Modeling**
 
